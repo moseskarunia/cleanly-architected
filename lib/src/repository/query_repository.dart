@@ -62,6 +62,10 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
     @required int pageNumber,
     @required U queryParams,
   }) async {
+    if (queryParams == lastQueryParams && endOfList) {
+      return Right(cachedData);
+    }
+
     if (queryParams == lastQueryParams &&
         cachedData.length >= pageNumber * pageSize) {
       final results = cachedData.take(pageNumber * pageSize).toList();
@@ -104,6 +108,6 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
     @required int pageSize,
     @required U queryParams,
   }) async {
-    //
+    throw UnimplementedError();
   }
 }

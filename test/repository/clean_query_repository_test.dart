@@ -51,6 +51,32 @@ void main() {
   });
 
   group('readNext', () {
+    test('should returns as-is if endOfList and identical query params',
+        () async {
+      repo.cachedData = [
+        _TestEntity('1', 'Orange'),
+        _TestEntity('2', 'Strawberry'),
+        _TestEntity('3', 'Pineapple'),
+        _TestEntity('4', 'Orange'),
+      ];
+      repo.endOfList = true;
+      repo.lastQueryParams = _TestEntityQueryParams('abc');
+
+      final results = await repo.readNext(
+        pageNumber: 3,
+        pageSize: 3,
+        queryParams: _TestEntityQueryParams('abc'),
+      );
+
+      expect((results as Right).value, [
+        _TestEntity('1', 'Orange'),
+        _TestEntity('2', 'Strawberry'),
+        _TestEntity('3', 'Pineapple'),
+        _TestEntity('4', 'Orange'),
+      ]);
+      verifyZeroInteractions(mockRemoteDataSource);
+      verifyZeroInteractions(mockLocalDataSource);
+    });
     test('should return cachedData if has sufficient length', () async {
       repo.cachedData = [
         _TestEntity('1', 'Orange'),
@@ -89,7 +115,6 @@ void main() {
           _TestEntity('3', 'Pineapple'),
         ];
         repo.lastQueryParams = _TestEntityQueryParams('abc');
-        repo.endOfList = true;
 
         when(mockLocalDataSource.read(any)).thenAnswer(
           (_) async => [
