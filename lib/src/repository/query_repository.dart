@@ -2,6 +2,7 @@ import 'package:cleanly_architected/src/clean_error.dart';
 import 'package:cleanly_architected/src/data_source/local_data_source.dart';
 import 'package:cleanly_architected/src/data_source/params.dart';
 import 'package:cleanly_architected/src/data_source/remote_data_source.dart';
+import 'package:cleanly_architected/src/entity/equatable_entity.dart';
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
 
@@ -14,7 +15,7 @@ import 'package:meta/meta.dart';
 ///
 /// This [QueryRepository] will also automatically handles simple
 /// pagination based on pageSize and pageNumber.
-class QueryRepository<T, U extends QueryParams<T>> {
+class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
   final RemoteQueryDataSource<T, U> remoteQueryDataSource;
   final LocalQueryDataSource<T, U> localQueryDataSource;
 
@@ -44,18 +45,17 @@ class QueryRepository<T, U extends QueryParams<T>> {
   /// If [lastQueryParams] is different than [queryParams], will always request
   /// data from the server.
   ///
-  /// Take [pageNumber] amount of data from the [cachedData] starting at
-  /// [pageNumber]. If [cachedData]'s length is lesser than [pageSize] and not
+  /// Take [pageNumber]x[pageNumber] amount of data from the [cachedData].
+  /// If [cachedData]'s length is lesser and not
   /// yet [endOfList], will read from [localDataSource] (if provided).
   ///
   /// If the result from [localQueryDataSource] and [cachedData] satisfies the
-  /// [pageNumber] and [pageSize], will immediately returns the data,
-  /// and set [endOfList] to false. Otherwise, will call [remoteQueryDataSource]
-  /// with [pageNumber] and [pageSize].
+  /// [pageNumber] and [pageSize], will immediately returns the data, otherwise,
+  /// will call [remoteQueryDataSource] with [pageNumber] and [pageSize].
   ///
-  /// If the server response length is at least equal to [pageSize], then,
-  /// set the [endOfList] to false. (Otherwise, true) and then append
-  /// the newest obtained data to [cachedData], and call local storage's
+  /// If the remoteDataSource result length is at least equal to [pageSize],
+  /// then, set the [endOfList] to false. (Otherwise, true) and then append
+  /// the newest obtained data to [cachedData], and call localDataSource's
   /// [putAll].
   Future<Either<CleanFailure, List<T>>> readNext({
     @required int pageSize,
@@ -68,7 +68,32 @@ class QueryRepository<T, U extends QueryParams<T>> {
       return Right(results);
     }
 
-    throw UnimplementedError();
+    final localResults = await localQueryDataSource.read(queryParams);
+    cachedData = localResults;
+
+    if (queryParams == lastQueryParams &&
+        cachedData.length >= pageNumber * pageSize) {
+      final results = cachedData.take(pageNumber * pageSize).toList();
+      return Right(results);
+    }
+
+    final remoteResults = await remoteQueryDataSource.read(
+      pageNumber: pageNumber,
+      pageSize: pageSize,
+      queryParams: queryParams,
+    );
+
+    cachedData = [...cachedData, ...remoteResults];
+    final ids = cachedData.map((e) => e.id).toSet();
+    cachedData.retainWhere((x) => ids.remove(x.id));
+
+    await localQueryDataSource.delete();
+    await localQueryDataSource.putAll(data: cachedData);
+
+    lastQueryParams = queryParams;
+    endOfList = remoteResults.length < pageNumber;
+
+    return Right(cachedData);
   }
 
   /// Immediately call the remote server at page 1 with [pageSize].
