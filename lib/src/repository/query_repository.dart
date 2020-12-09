@@ -78,7 +78,12 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
         queryParams: queryParams,
       );
 
-      return Right(cachedData.take(pageSize).toList());
+      return Right(cachedData.take(1 * pageSize).toList());
+    }
+
+    if (endOfList ||
+        (localQueryDataSource == null && remoteQueryDataSource == null)) {
+      return Right(cachedData.take(pageNumber * pageSize).toList());
     }
 
     throw UnimplementedError();

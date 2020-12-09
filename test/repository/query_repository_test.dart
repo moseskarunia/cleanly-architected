@@ -196,11 +196,71 @@ void main() {
       });
     });
 
-    // group('when cachedData.length is not enough', () {
-    //   test('should call localDataSource', () {});
-    //   test('should call remote directly if localDataSource null', () {});
+    group('when queryParams unchanged, should return cachedData directly', () {
+      test('if endOfList true', () async {
+        repo.cachedData = [
+          _TestEntity('1', 'Orange'),
+          _TestEntity('2', 'Strawberry'),
+          _TestEntity('3', 'Apple'),
+          _TestEntity('4', 'Banana'),
+        ];
+        repo.lastQueryParams = _TestEntityQueryParams('abc');
+        repo.endOfList = true;
+        final results = await repo.readNext(
+          pageNumber: 2,
+          pageSize: 3,
+          queryParams: _TestEntityQueryParams('abc'),
+        );
 
-    // test('should return ')
-    // });
+        expect((results as Right).value, [
+          _TestEntity('1', 'Orange'),
+          _TestEntity('2', 'Strawberry'),
+          _TestEntity('3', 'Apple'),
+          _TestEntity('4', 'Banana'),
+        ]);
+        verifyZeroInteractions(mockLocalDataSource);
+        verifyZeroInteractions(mockRemoteDataSource);
+      });
+      test('if both data source null', () async {
+        repo = QueryRepository();
+        repo.cachedData = [
+          _TestEntity('1', 'Orange'),
+          _TestEntity('2', 'Strawberry'),
+          _TestEntity('3', 'Apple'),
+          _TestEntity('4', 'Banana'),
+        ];
+        repo.lastQueryParams = _TestEntityQueryParams('abc');
+        repo.endOfList = false;
+        final results = await repo.readNext(
+          pageNumber: 2,
+          pageSize: 3,
+          queryParams: _TestEntityQueryParams('abc'),
+        );
+
+        expect((results as Right).value, [
+          _TestEntity('1', 'Orange'),
+          _TestEntity('2', 'Strawberry'),
+          _TestEntity('3', 'Apple'),
+          _TestEntity('4', 'Banana'),
+        ]);
+        verifyZeroInteractions(mockLocalDataSource);
+        verifyZeroInteractions(mockRemoteDataSource);
+      });
+    });
+    group('when cachedData.length is not enough', () {
+      test('should call localDataSource', () {
+        // TODO:
+      });
+      test('should call remote directly if localDataSource null', () {
+        // TODO:
+      });
+    });
+
+    test(
+      'should return cachedData if enough and queryParams unchanged',
+      () async {
+        // TODO:
+      },
+    );
   });
 }
