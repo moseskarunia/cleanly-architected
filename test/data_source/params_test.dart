@@ -10,7 +10,7 @@ class _TestClass extends Equatable {
 void main() {
   group('NoQueryParams', () {
     test('props', () {
-      final q = NoQueryParams<_TestClass>(pageNumber: 2, pageSize: 20);
+      final q = NoQueryParams<_TestClass>();
       expect(q.props, [2, 20]);
       expect(q, isA<QueryParams<_TestClass>>());
     });
