@@ -8,13 +8,15 @@ abstract class RemoteQueryDataSource<T, U extends QueryParams<T>> {
 
   const RemoteQueryDataSource({@required this.client});
 
-  Future<List<T>> read(U params);
+  /// Read [pageSize] amount of data from [client] based on [queryParams] with
+  /// page equals to [pageNumber]
+  Future<List<T>> read({int pageSize, int pageNumber, U queryParams});
 }
 
 /// The data source which responsible to mutate data from the remote client.
 /// Mutation is a term to, well, mutate data. So it includes create, update,
 /// and delete. If you don't need a particular function, just throw a
-/// [CleanException] when calling that function
+/// [CleanException] when calling that function.
 abstract class RemoteMutationDataSource<T, U extends MutationParams<T>,
     V extends DeletionParams<T>> {
   final CleanApiClient client;
