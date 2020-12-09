@@ -15,6 +15,9 @@ import 'package:meta/meta.dart';
 ///
 /// This [QueryRepository] will also automatically handles simple
 /// pagination based on pageSize and pageNumber.
+///
+/// For now, it just support infinite list style pagination, because the data it
+/// returns is list.take([pageNumber]*[pageSize])
 class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
   final RemoteQueryDataSource<T, U> remoteQueryDataSource;
   final LocalQueryDataSource<T, U> localQueryDataSource;
@@ -62,23 +65,56 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
     @required int pageNumber,
     @required U queryParams,
   }) async {
-    if (queryParams == lastQueryParams && endOfList) {
-      return Right(cachedData);
+    if (queryParams != lastQueryParams) {
+      await _queryLocally(queryParams: queryParams, pageNumber: pageNumber);
+
+      if (cachedData.length >= pageSize) {
+        return Right(cachedData.take(pageSize).toList());
+      }
+
+      await _queryRemotely(
+        pageNumber: 1,
+        pageSize: pageSize,
+        queryParams: queryParams,
+      );
+
+      return Right(cachedData.take(pageSize).toList());
     }
 
-    if (queryParams == lastQueryParams &&
-        cachedData.length >= pageNumber * pageSize) {
-      final results = cachedData.take(pageNumber * pageSize).toList();
-      return Right(results);
+    throw UnimplementedError();
+  }
+
+  /// Immediately call the remote server at page 1 with [pageSize].
+  /// If the call succeed, replace [cachedData] with the result, delete the
+  /// cached data in local storage, and putAll [cachedData] to the local
+  /// storage.
+  Future<Either<CleanFailure, List<T>>> refreshAll({
+    @required int pageSize,
+    @required U queryParams,
+  }) async {
+    throw UnimplementedError();
+  }
+
+  /// Attempt to query locally with given [queryParams]. The query result
+  /// will always replace [cachedData] since [localQueryDataSource] doesn't
+  /// have pagination built in (on purpose)
+  Future<void> _queryLocally({U queryParams, int pageNumber}) async {
+    if (localQueryDataSource == null) {
+      return;
     }
+    final localResults = await localQueryDataSource.read(params: queryParams);
+    cachedData = [...localResults];
+    lastQueryParams = queryParams;
+    endOfList = localResults.length < pageNumber;
+  }
 
-    final localResults = await localQueryDataSource.read(queryParams);
-    cachedData = localResults;
-
-    if (queryParams == lastQueryParams &&
-        cachedData.length >= pageNumber * pageSize) {
-      final results = cachedData.take(pageNumber * pageSize).toList();
-      return Right(results);
+  Future<void> _queryRemotely({
+    @required int pageSize,
+    @required int pageNumber,
+    @required U queryParams,
+  }) async {
+    if (remoteQueryDataSource == null) {
+      return;
     }
 
     final remoteResults = await remoteQueryDataSource.read(
@@ -91,23 +127,11 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
     final ids = cachedData.map((e) => e.id).toSet();
     cachedData.retainWhere((x) => ids.remove(x.id));
 
-    await localQueryDataSource.delete();
-    await localQueryDataSource.putAll(data: cachedData);
+    if (localQueryDataSource != null) {
+      await localQueryDataSource.putAll(data: cachedData);
+    }
 
     lastQueryParams = queryParams;
     endOfList = remoteResults.length < pageNumber;
-
-    return Right(cachedData);
-  }
-
-  /// Immediately call the remote server at page 1 with [pageSize].
-  /// If the call succeed, replace [cachedData] with the result, delete the
-  /// cached data in local storage, and putAll [cachedData] to the local
-  /// storage.
-  Future<Either<CleanFailure, List<T>>> refreshAll({
-    @required int pageSize,
-    @required U queryParams,
-  }) async {
-    throw UnimplementedError();
   }
 }
