@@ -26,11 +26,11 @@ abstract class RemoteMutationDataSource<T extends EquatableEntity,
   const RemoteMutationDataSource({@required this.client});
 
   /// Create data with [params] and return T as the result.
-  Future<T> create(U params);
+  Future<T> create({@required U params});
 
   /// Update data to [params] and return T as the result.
-  Future<T> update(U params);
+  Future<T> update({@required U params});
 
   /// Delete a data with satisfies specified [params].
-  Future<void> delete(V params);
+  Future<void> delete({@required V params});
 }
