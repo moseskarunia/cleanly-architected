@@ -54,87 +54,47 @@ void main() {
 
   group('readNext', () {
     group('when queryParams is different', () {
-      group('should call localDataSource', () {
-        test('and restart from pageNumber 1', () async {
-          when(mockLocalDataSource.read(params: anyNamed('params'))).thenAnswer(
-            (_) async => [
-              _TestEntity('1', 'Orange'),
-              _TestEntity('2', 'Strawberry'),
-              _TestEntity('3', 'Pineapple'),
-              _TestEntity('4', 'Orange'),
-              _TestEntity('5', 'Strawberry'),
-              _TestEntity('6', 'Pineapple'),
-            ],
-          );
-          repo.cachedData = [
-            _TestEntity('1', 'Orange'),
-            _TestEntity('2', 'Strawberry'),
-            _TestEntity('3', 'Pineapple'),
-            _TestEntity('4', 'Orange'),
-          ];
-          repo.endOfList = true;
-          repo.lastQueryParams = _TestEntityQueryParams('def');
-          final results = await repo.readNext(
-            pageNumber: 3,
-            pageSize: 3,
-            queryParams: _TestEntityQueryParams('abc'),
-          );
-
-          expect((results as Right).value, [
-            _TestEntity('1', 'Orange'),
-            _TestEntity('2', 'Strawberry'),
-            _TestEntity('3', 'Pineapple'),
-          ]);
-          expect(repo.cachedData, [
+      test('should call localDataSource if not null', () async {
+        when(mockLocalDataSource.read(params: anyNamed('params'))).thenAnswer(
+          (_) async => [
             _TestEntity('1', 'Orange'),
             _TestEntity('2', 'Strawberry'),
             _TestEntity('3', 'Pineapple'),
             _TestEntity('4', 'Orange'),
             _TestEntity('5', 'Strawberry'),
             _TestEntity('6', 'Pineapple'),
-          ]);
-          expect(repo.lastQueryParams, _TestEntityQueryParams('abc'));
-          verify(
-              mockLocalDataSource.read(params: _TestEntityQueryParams('abc')));
-          verifyZeroInteractions(mockRemoteDataSource);
-        });
+          ],
+        );
+        repo.cachedData = [
+          _TestEntity('1', 'Orange'),
+          _TestEntity('2', 'Strawberry'),
+          _TestEntity('3', 'Pineapple'),
+          _TestEntity('4', 'Orange'),
+        ];
+        repo.endOfList = true;
+        repo.lastQueryParams = _TestEntityQueryParams('def');
+        final results = await repo.readNext(
+          pageNumber: 3,
+          pageSize: 3,
+          queryParams: _TestEntityQueryParams('abc'),
+        );
 
-        test('and return as-is if remote is null', () async {
-          repo = QueryRepository(
-            remoteQueryDataSource: null,
-            localQueryDataSource: mockLocalDataSource,
-          );
-          when(mockLocalDataSource.read(params: anyNamed('params'))).thenAnswer(
-            (_) async => [
-              _TestEntity('1', 'Orange'),
-              _TestEntity('2', 'Strawberry'),
-            ],
-          );
-
-          repo.cachedData = [_TestEntity('1', 'Orange')];
-          repo.endOfList = false;
-          repo.lastQueryParams = _TestEntityQueryParams('def');
-          final results = await repo.readNext(
-            pageNumber: 3,
-            pageSize: 3,
-            queryParams: _TestEntityQueryParams('abc'),
-          );
-
-          expect((results as Right).value, [
-            _TestEntity('1', 'Orange'),
-            _TestEntity('2', 'Strawberry'),
-          ]);
-          expect(repo.cachedData, [
-            _TestEntity('1', 'Orange'),
-            _TestEntity('2', 'Strawberry'),
-          ]);
-          expect(repo.lastQueryParams, _TestEntityQueryParams('abc'));
-          expect(repo.endOfList, true);
-          verify(
-            mockLocalDataSource.read(params: _TestEntityQueryParams('abc')),
-          );
-          verifyZeroInteractions(mockRemoteDataSource);
-        });
+        expect((results as Right).value, [
+          _TestEntity('1', 'Orange'),
+          _TestEntity('2', 'Strawberry'),
+          _TestEntity('3', 'Pineapple'),
+        ]);
+        expect(repo.cachedData, [
+          _TestEntity('1', 'Orange'),
+          _TestEntity('2', 'Strawberry'),
+          _TestEntity('3', 'Pineapple'),
+          _TestEntity('4', 'Orange'),
+          _TestEntity('5', 'Strawberry'),
+          _TestEntity('6', 'Pineapple'),
+        ]);
+        expect(repo.lastQueryParams, _TestEntityQueryParams('abc'));
+        verify(mockLocalDataSource.read(params: _TestEntityQueryParams('abc')));
+        verifyZeroInteractions(mockRemoteDataSource);
       });
 
       group('should call remoteDataSource', () {
@@ -213,5 +173,12 @@ void main() {
         });
       });
     });
+
+    // group('when cachedData.length is not enough', () {
+    //   test('should call localDataSource', () {});
+    //   test('should call remote directly if localDataSource null', () {});
+
+    // test('should return ')
+    // });
   });
 }

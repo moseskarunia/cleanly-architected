@@ -66,7 +66,7 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
     @required U queryParams,
   }) async {
     if (queryParams != lastQueryParams) {
-      await _queryLocally(queryParams: queryParams, pageNumber: pageNumber);
+      await _queryLocally(queryParams: queryParams, pageSize: pageSize);
 
       if (cachedData.length >= pageSize) {
         return Right(cachedData.take(pageSize).toList());
@@ -98,14 +98,14 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
   /// Attempt to query locally with given [queryParams]. The query result
   /// will always replace [cachedData] since [localQueryDataSource] doesn't
   /// have pagination built in (on purpose)
-  Future<void> _queryLocally({U queryParams, int pageNumber}) async {
+  Future<void> _queryLocally({U queryParams, int pageSize}) async {
     if (localQueryDataSource == null) {
       return;
     }
     final localResults = await localQueryDataSource.read(params: queryParams);
     cachedData = [...localResults];
     lastQueryParams = queryParams;
-    endOfList = localResults.length < pageNumber;
+    endOfList = localResults.length < pageSize;
   }
 
   Future<void> _queryRemotely({
