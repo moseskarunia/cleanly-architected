@@ -54,7 +54,7 @@ void main() {
 
   group('readNext', () {
     group('when queryParams is different', () {
-      test('should call localDataSource if not null', () async {
+      test('should call localDataSource', () async {
         when(mockLocalDataSource.read(params: anyNamed('params'))).thenAnswer(
           (_) async => [
             _TestEntity('1', 'Orange'),
@@ -140,7 +140,7 @@ void main() {
           expect(repo.endOfList, false);
         }
 
-        test('if localDataSource result length < pageSize', () async {
+        test('if localDataSource result length < 1 * pageSize', () async {
           await _performTest();
           verifyInOrder([
             mockLocalDataSource.read(params: _TestEntityQueryParams('abc')),
@@ -171,6 +171,28 @@ void main() {
             queryParams: _TestEntityQueryParams('abc'),
           ));
         });
+      });
+
+      test('should directly return cachedData if both data source null',
+          () async {
+        repo = QueryRepository();
+        repo.cachedData = [
+          _TestEntity('1', 'Orange'),
+          _TestEntity('2', 'Strawberry'),
+        ];
+
+        final results = await repo.readNext(
+          pageNumber: 3,
+          pageSize: 5,
+          queryParams: _TestEntityQueryParams('abc'),
+        );
+
+        expect((results as Right).value, [
+          _TestEntity('1', 'Orange'),
+          _TestEntity('2', 'Strawberry'),
+        ]);
+        verifyZeroInteractions(mockLocalDataSource);
+        verifyZeroInteractions(mockRemoteDataSource);
       });
     });
 

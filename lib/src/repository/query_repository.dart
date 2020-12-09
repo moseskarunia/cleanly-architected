@@ -68,8 +68,8 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
     if (queryParams != lastQueryParams) {
       await _queryLocally(queryParams: queryParams, pageSize: pageSize);
 
-      if (cachedData.length >= pageSize) {
-        return Right(cachedData.take(pageSize).toList());
+      if (cachedData.length >= 1 * pageSize) {
+        return Right(cachedData.take(1 * pageSize).toList());
       }
 
       await _queryRemotely(
