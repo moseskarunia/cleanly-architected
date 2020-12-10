@@ -7,6 +7,11 @@ class _TestClass extends EquatableEntity {
 
   @override
   List<Object> get props => [id];
+
+  @override
+  Map<String, dynamic> toJson() {
+    throw UnimplementedError();
+  }
 }
 
 void main() {

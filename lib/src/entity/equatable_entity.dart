@@ -10,4 +10,8 @@ abstract class EquatableEntity extends Equatable {
   final String id;
 
   const EquatableEntity(this.id);
+
+  /// Will be used in [LocalQueryDataSource]'s putAll.
+  /// So you don't have to keep implementing the same things multiple times.
+  Map<String, dynamic> toJson();
 }
