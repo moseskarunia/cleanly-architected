@@ -22,6 +22,14 @@ class _TestEntity extends EquatableEntity {
   }
 }
 
+class _TestEntityQueryParams extends QueryParams<_TestEntity> {
+  final String name;
+
+  _TestEntityQueryParams(this.name);
+  @override
+  List<Object> get props => [name];
+}
+
 class _TestEntityMutationParams extends MutationParams<_TestEntity> {
   final String name;
 
@@ -52,26 +60,29 @@ class MockRemoteMutationDataSource extends Mock
         RemoteMutationDataSource<_TestEntity, _TestEntityMutationParams,
             _TestEntityDeletionParams> {}
 
+class MockLocalQueryDataSource extends Mock
+    implements LocalQueryDataSource<_TestEntity, _TestEntityQueryParams> {}
+
 void main() {
   final mutationParamsFixture = _TestEntityMutationParams('abc');
   final deletionParamsFixture = _TestEntityDeletionParams('abc');
-  MockLocalMutationDataSource mockLocalDataSource;
   MockRemoteMutationDataSource mockRemoteDataSource;
+  MockLocalQueryDataSource mockLocalQueryDataSource;
   MutationRepository<_TestEntity, _TestEntityMutationParams,
-      _TestEntityDeletionParams> repo;
+      _TestEntityDeletionParams, _TestEntityQueryParams> repo;
 
   setUp(() {
-    mockLocalDataSource = MockLocalMutationDataSource();
+    mockLocalQueryDataSource = MockLocalQueryDataSource();
     mockRemoteDataSource = MockRemoteMutationDataSource();
     repo = MutationRepository(
-      localMutationDataSource: mockLocalDataSource,
       remoteMutationDataSource: mockRemoteDataSource,
+      localQueryDataSource: mockLocalQueryDataSource,
     );
   });
 
   test('should assign data sources correctly', () {
-    expect(repo.localMutationDataSource, mockLocalDataSource);
     expect(repo.remoteMutationDataSource, mockRemoteDataSource);
+    expect(repo.localQueryDataSource, mockLocalQueryDataSource);
   });
 
   group('create', () {
@@ -108,6 +119,40 @@ void main() {
         );
       });
     });
+
+    test('should return CleanFailure with NO_REMOTE_DATA_SOURCE', () async {
+      repo = MutationRepository(remoteMutationDataSource: null);
+      final result = await repo.create(params: mutationParamsFixture);
+      expect(
+        (result as Left).value,
+        CleanFailure(name: 'NO_REMOTE_DATA_SOURCE'),
+      );
+    });
+    group('should call create to remote mutation data source', () {
+      Future<void> _performTest() async {
+        when(mockRemoteDataSource.create(params: anyNamed('params')))
+            .thenAnswer((_) async => _TestEntity('1', 'Apple'));
+        final result = await repo.create(params: mutationParamsFixture);
+        expect((result as Right).value, _TestEntity('1', 'Apple'));
+      }
+
+      test('and cache the result', () async {
+        await _performTest();
+        verifyInOrder([
+          mockRemoteDataSource.create(params: mutationParamsFixture),
+          mockLocalQueryDataSource.putAll(data: [_TestEntity('1', 'Apple')])
+        ]);
+      });
+
+      test('and not cache the result', () async {
+        repo = MutationRepository(
+          remoteMutationDataSource: mockRemoteDataSource,
+        );
+        await _performTest();
+        verify(mockRemoteDataSource.create(params: mutationParamsFixture));
+        verifyZeroInteractions(mockLocalQueryDataSource);
+      });
+    });
   });
 
   group('update', () {
@@ -142,6 +187,40 @@ void main() {
             data: <String, dynamic>{'id': 1},
           ),
         );
+      });
+    });
+
+    test('should return CleanFailure with NO_REMOTE_DATA_SOURCE', () async {
+      repo = MutationRepository(remoteMutationDataSource: null);
+      final result = await repo.update(params: mutationParamsFixture);
+      expect(
+        (result as Left).value,
+        CleanFailure(name: 'NO_REMOTE_DATA_SOURCE'),
+      );
+    });
+    group('should call create to remote mutation data source', () {
+      Future<void> _performTest() async {
+        when(mockRemoteDataSource.update(params: anyNamed('params')))
+            .thenAnswer((_) async => _TestEntity('1', 'Apple'));
+        final result = await repo.update(params: mutationParamsFixture);
+        expect((result as Right).value, _TestEntity('1', 'Apple'));
+      }
+
+      test('and cache the result', () async {
+        await _performTest();
+        verifyInOrder([
+          mockRemoteDataSource.update(params: mutationParamsFixture),
+          mockLocalQueryDataSource.putAll(data: [_TestEntity('1', 'Apple')])
+        ]);
+      });
+
+      test('and not cache the result', () async {
+        repo = MutationRepository(
+          remoteMutationDataSource: mockRemoteDataSource,
+        );
+        await _performTest();
+        verify(mockRemoteDataSource.update(params: mutationParamsFixture));
+        verifyZeroInteractions(mockLocalQueryDataSource);
       });
     });
   });

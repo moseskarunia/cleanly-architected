@@ -14,20 +14,31 @@ import 'package:meta/meta.dart';
 /// to your service locator (such as [GetIt](https://pub.dev/packages/get_it))
 /// with different T.
 class MutationRepository<T extends EquatableEntity, U extends MutationParams<T>,
-    V extends DeletionParams<T>> {
+    V extends DeletionParams<T>, W extends QueryParams<T>> {
   final RemoteMutationDataSource<T, U, V> remoteMutationDataSource;
-  final LocalMutationDataSource<T, U> localMutationDataSource;
+
+  /// To cache the result after creating.
+  final LocalQueryDataSource<T, W> localQueryDataSource;
 
   MutationRepository({
-    this.remoteMutationDataSource,
-    this.localMutationDataSource,
+    @required this.remoteMutationDataSource,
+    this.localQueryDataSource,
   });
 
-  /// Request data creation to both remote and local (if data source is not
-  /// null)
+  /// Request data creation to both remoteDataSource. If succeed, and result
+  /// not null, cache in local.
   Future<Either<CleanFailure, T>> create({@required U params}) async {
     try {
-      await remoteMutationDataSource.create(params: params);
+      if (remoteMutationDataSource == null) {
+        throw CleanException(name: 'NO_REMOTE_DATA_SOURCE');
+      }
+      final result = await remoteMutationDataSource.create(params: params);
+
+      if (result != null) {
+        await localQueryDataSource?.putAll(data: [result]);
+      }
+
+      return Right(result);
     } on CleanException catch (e) {
       return Left(CleanFailure(name: e.name, data: e.data, group: e.group));
     } catch (_) {
@@ -35,10 +46,20 @@ class MutationRepository<T extends EquatableEntity, U extends MutationParams<T>,
     }
   }
 
-  /// Request data update to both remote and local (if data source is not null)
+  /// Request data update to both remoteDataSource. If succeed, and result
+  /// not null, cache in local.
   Future<Either<CleanFailure, T>> update({@required U params}) async {
     try {
-      await remoteMutationDataSource.update(params: params);
+      if (remoteMutationDataSource == null) {
+        throw CleanException(name: 'NO_REMOTE_DATA_SOURCE');
+      }
+      final result = await remoteMutationDataSource.update(params: params);
+
+      if (result != null) {
+        await localQueryDataSource?.putAll(data: [result]);
+      }
+
+      return Right(result);
     } on CleanException catch (e) {
       return Left(CleanFailure(name: e.name, data: e.data, group: e.group));
     } catch (_) {
