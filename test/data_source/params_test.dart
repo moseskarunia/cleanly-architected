@@ -1,17 +1,19 @@
 import 'package:cleanly_architected/src/data_source/params.dart';
-import 'package:equatable/equatable.dart';
+import 'package:cleanly_architected/src/entity/equatable_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-class _TestClass extends Equatable {
+class _TestClass extends EquatableEntity {
+  _TestClass(String id) : super(id);
+
   @override
-  List<Object> get props => [];
+  List<Object> get props => [id];
 }
 
 void main() {
   group('NoQueryParams', () {
     test('props', () {
       final q = NoQueryParams<_TestClass>();
-      expect(q.props, [2, 20]);
+      expect(q.props, []);
       expect(q, isA<QueryParams<_TestClass>>());
     });
   });

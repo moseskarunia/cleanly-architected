@@ -30,10 +30,10 @@ In clean architecture, each layer should be independent to each other. This is t
 
 ```dart
 abstract class CleanApiClient {
-  List<Map<String,dynamic>> read({@required String path, Map<String,dynamic> queryParams});
-  Map<String,dynamic> create({@required String path, Map<String,dynamic> body});
-  Map<String,dynamic> update({@required String path, Map<String,dynamic> body});
-  void delete({@required String path});
+  Future<List<Map<String,dynamic>>> read({@required String path, Map<String,dynamic> queryParams});
+  Future<Map<String,dynamic>> create({@required String path, Map<String,dynamic> body});
+  Future<Map<String,dynamic>> update({@required String path, Map<String,dynamic> body});
+  Future<void> delete({@required String path});
 }
 ```
 
@@ -46,9 +46,7 @@ abstract class QueryDataSource<T extends Equatable, U extends QueryParams<T>> {
 
   const QueryDataSource({@required this.client});
   
-  List<T> read(U params){
-    /// Make some logic to call [client.read]
-  }
+  Future<List<T>> read(U params);
 }
 ```
 
