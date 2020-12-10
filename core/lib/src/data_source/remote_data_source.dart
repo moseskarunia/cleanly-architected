@@ -1,6 +1,6 @@
-import 'package:cleanly_architected/src/data_source/params.dart';
-import 'package:cleanly_architected/src/entity/equatable_entity.dart';
-import 'package:cleanly_architected/src/platform/clean_api_client.dart';
+import 'package:cleanly_architected_core/src/data_source/params.dart';
+import 'package:cleanly_architected_core/src/entity/equatable_entity.dart';
+import 'package:cleanly_architected_core/src/platform/clean_api_client.dart';
 import 'package:meta/meta.dart';
 
 /// The data source which responsible to query data from the remote client.

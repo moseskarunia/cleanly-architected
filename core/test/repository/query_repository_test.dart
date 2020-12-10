@@ -1,9 +1,9 @@
-import 'package:cleanly_architected/src/clean_error.dart';
-import 'package:cleanly_architected/src/data_source/local_data_source.dart';
-import 'package:cleanly_architected/src/data_source/params.dart';
-import 'package:cleanly_architected/src/data_source/remote_data_source.dart';
-import 'package:cleanly_architected/src/entity/equatable_entity.dart';
-import 'package:cleanly_architected/src/repository/query_repository.dart';
+import 'package:cleanly_architected_core/src/clean_error.dart';
+import 'package:cleanly_architected_core/src/data_source/local_data_source.dart';
+import 'package:cleanly_architected_core/src/data_source/params.dart';
+import 'package:cleanly_architected_core/src/data_source/remote_data_source.dart';
+import 'package:cleanly_architected_core/src/entity/equatable_entity.dart';
+import 'package:cleanly_architected_core/src/repository/query_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -74,7 +74,8 @@ void main() {
             const CleanFailure(name: 'UNEXPECTED_ERROR'));
       });
       test('and return CleanFailure with expected values', () async {
-        when(mockLocalDataSource.read(queryParams: anyNamed('queryParams'))).thenThrow(
+        when(mockLocalDataSource.read(queryParams: anyNamed('queryParams')))
+            .thenThrow(
           const CleanException(
             name: 'TEST_ERROR',
             group: 'TEST',
@@ -100,7 +101,8 @@ void main() {
     });
     group('should call localDataSource', () {
       setUp(() {
-        when(mockLocalDataSource.read(queryParams: anyNamed('queryParams'))).thenAnswer(
+        when(mockLocalDataSource.read(queryParams: anyNamed('queryParams')))
+            .thenAnswer(
           (_) async => [
             _TestEntity('1', 'Orange'),
             _TestEntity('2', 'Strawberry'),
@@ -140,7 +142,8 @@ void main() {
           _TestEntity('6', 'Pineapple'),
         ]);
         expect(repo.lastQueryParams, _TestEntityQueryParams('abc'));
-        verify(mockLocalDataSource.read(queryParams: _TestEntityQueryParams('abc')));
+        verify(mockLocalDataSource.read(
+            queryParams: _TestEntityQueryParams('abc')));
         verifyZeroInteractions(mockRemoteDataSource);
       });
 
@@ -171,14 +174,16 @@ void main() {
           _TestEntity('6', 'Pineapple'),
         ]);
         expect(repo.lastQueryParams, _TestEntityQueryParams('abc'));
-        verify(mockLocalDataSource.read(queryParams: _TestEntityQueryParams('abc')));
+        verify(mockLocalDataSource.read(
+            queryParams: _TestEntityQueryParams('abc')));
         verifyZeroInteractions(mockRemoteDataSource);
       });
     });
 
     group('should call remoteDataSource', () {
       Future<void> _performTest({String queryParamString = 'abc'}) async {
-        when(mockLocalDataSource.read(queryParams: anyNamed('queryParams'))).thenAnswer(
+        when(mockLocalDataSource.read(queryParams: anyNamed('queryParams')))
+            .thenAnswer(
           (_) async => [
             _TestEntity('1', 'Orange'),
             _TestEntity('2', 'Strawberry'),
@@ -245,7 +250,8 @@ void main() {
           );
           final results = await _performTest();
           verifyInOrder([
-            mockLocalDataSource.read(queryParams: _TestEntityQueryParams('abc')),
+            mockLocalDataSource.read(
+                queryParams: _TestEntityQueryParams('abc')),
             mockRemoteDataSource.read(
               pageNumber: 1,
               pageSize: 3,
@@ -307,7 +313,8 @@ void main() {
           expect(repo.lastQueryParams, _TestEntityQueryParams('def'));
           expect(repo.endOfList, false);
           verifyInOrder([
-            mockLocalDataSource.read(queryParams: _TestEntityQueryParams('def')),
+            mockLocalDataSource.read(
+                queryParams: _TestEntityQueryParams('def')),
             mockRemoteDataSource.read(
               pageNumber: 2,
               pageSize: 3,
@@ -473,7 +480,8 @@ void main() {
     test('will call localDataSource only if remoteDataSource null', () async {
       repo = QueryRepository(localQueryDataSource: mockLocalDataSource);
 
-      when(mockLocalDataSource.read(queryParams: anyNamed('queryParams'))).thenAnswer(
+      when(mockLocalDataSource.read(queryParams: anyNamed('queryParams')))
+          .thenAnswer(
         (_) async => [
           _TestEntity('1', 'Orange'),
           _TestEntity('2', 'Strawberry'),
@@ -507,7 +515,8 @@ void main() {
       expect(repo.endOfList, true);
       expect(repo.lastQueryParams, _TestEntityQueryParams('abc'));
 
-      verify(mockLocalDataSource.read(queryParams: _TestEntityQueryParams('abc')));
+      verify(
+          mockLocalDataSource.read(queryParams: _TestEntityQueryParams('abc')));
       verifyZeroInteractions(mockRemoteDataSource);
     });
 

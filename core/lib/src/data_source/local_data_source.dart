@@ -1,6 +1,6 @@
-import 'package:cleanly_architected/src/data_source/params.dart';
-import 'package:cleanly_architected/src/entity/equatable_entity.dart';
-import 'package:cleanly_architected/src/platform/clean_local_storage.dart';
+import 'package:cleanly_architected_core/src/data_source/params.dart';
+import 'package:cleanly_architected_core/src/entity/equatable_entity.dart';
+import 'package:cleanly_architected_core/src/platform/clean_local_storage.dart';
 import 'package:meta/meta.dart';
 
 /// Data source to which usually handles form caching so the user can return

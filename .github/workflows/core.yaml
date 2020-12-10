@@ -1,11 +1,20 @@
-name: cleanly_architected_pr_to_master_ci
+name: cleanly_architected_core
 
 on:
+  push:
+    paths: 
+      - "core/**"
+      - ".github/workflows/core.yaml"
   pull_request:
-    branches: [master]
+    paths: 
+      - "core/**"
+      - ".github/workflows/core.yaml"
 
 jobs:
   build:
+    defaults:
+      run:
+        working-directory: core/
     runs-on: ubuntu-latest
 
     steps:

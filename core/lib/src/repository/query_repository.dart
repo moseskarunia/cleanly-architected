@@ -1,8 +1,8 @@
-import 'package:cleanly_architected/src/clean_error.dart';
-import 'package:cleanly_architected/src/data_source/local_data_source.dart';
-import 'package:cleanly_architected/src/data_source/params.dart';
-import 'package:cleanly_architected/src/data_source/remote_data_source.dart';
-import 'package:cleanly_architected/src/entity/equatable_entity.dart';
+import 'package:cleanly_architected_core/src/clean_error.dart';
+import 'package:cleanly_architected_core/src/data_source/local_data_source.dart';
+import 'package:cleanly_architected_core/src/data_source/params.dart';
+import 'package:cleanly_architected_core/src/data_source/remote_data_source.dart';
+import 'package:cleanly_architected_core/src/entity/equatable_entity.dart';
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
 
@@ -139,7 +139,8 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
     if (localQueryDataSource == null) {
       return;
     }
-    final localResults = await localQueryDataSource.read(queryParams: queryParams);
+    final localResults =
+        await localQueryDataSource.read(queryParams: queryParams);
     cachedData = [...localResults];
     lastQueryParams = queryParams;
     endOfList = localResults.length < pageSize;

@@ -1,7 +1,7 @@
-import 'package:cleanly_architected/src/clean_error.dart';
-import 'package:cleanly_architected/src/data_source/params.dart';
-import 'package:cleanly_architected/src/entity/equatable_entity.dart';
-import 'package:cleanly_architected/src/repository/mutation_repository.dart';
+import 'package:cleanly_architected_core/src/clean_error.dart';
+import 'package:cleanly_architected_core/src/data_source/params.dart';
+import 'package:cleanly_architected_core/src/entity/equatable_entity.dart';
+import 'package:cleanly_architected_core/src/repository/mutation_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
 
