@@ -100,6 +100,16 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
     @required U queryParams,
   }) async {
     if (remoteQueryDataSource == null && localQueryDataSource == null) {
+      endOfList = true;
+      lastQueryParams = queryParams;
+      return Right(cachedData.take(pageSize).toList());
+    }
+
+    if (remoteQueryDataSource == null) {
+      final results = await localQueryDataSource.read(params: queryParams);
+      endOfList = true;
+      lastQueryParams = queryParams;
+      cachedData = results;
       return Right(cachedData.take(pageSize).toList());
     }
     throw UnimplementedError();
