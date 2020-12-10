@@ -1,4 +1,4 @@
-import 'package:cleanly_architected_core/src/clean_error.dart';
+import 'package:cleanly_architected_core/src/entity/clean_error.dart';
 import 'package:cleanly_architected_core/src/data_source/local_data_source.dart';
 import 'package:cleanly_architected_core/src/data_source/params.dart';
 import 'package:cleanly_architected_core/src/data_source/remote_data_source.dart';

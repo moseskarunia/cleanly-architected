@@ -1,4 +1,4 @@
-import 'package:cleanly_architected_core/src/clean_error.dart';
+import 'package:cleanly_architected_core/src/entity/clean_error.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
