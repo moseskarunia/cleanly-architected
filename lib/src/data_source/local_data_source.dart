@@ -7,9 +7,14 @@ import 'package:meta/meta.dart';
 /// to edit later without losing progress.
 abstract class LocalMutationDataSource<T extends EquatableEntity,
     U extends MutationParams<T>> {
+  /// Name of the storage or collection of local db.
+  final String storageName;
+
+  /// Storage is put on super class for convenience. You can always implement
+  /// your own with storage from implementation.
   final CleanLocalStorage storage;
 
-  const LocalMutationDataSource({this.storage});
+  const LocalMutationDataSource({this.storageName, this.storage});
 
   /// Returns list of T which satisfies [params]
   Future<List<T>> read({@required U params});
