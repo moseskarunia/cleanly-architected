@@ -1,5 +1,5 @@
 name: cleanly_architected
-description: A dart project to help set up clean architecture with less boilerplate.
+description: A flutter project to help set up clean architecture with less boilerplate.
 version: 0.0.1
 repository: https://github.com/moseskarunia/cleanly-architected
 
