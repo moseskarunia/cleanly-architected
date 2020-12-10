@@ -18,7 +18,8 @@ abstract class LocalMutationDataSource<T extends EquatableEntity,
   /// pair in the implementation, which matches [storage.putAll()].
   Future<void> putAll({@required U data});
 
-  /// Removes all the data under [storageName] if [key] is not provided,
+  /// Removes all the data under [st
+  /// orageName] if [key] is not provided,
   /// and removes only the specified data under [key] if specified.
   Future<void> delete({String key});
 }

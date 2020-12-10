@@ -8,7 +8,7 @@ abstract class RemoteQueryDataSource<T extends EquatableEntity,
     U extends QueryParams<T>> {
   final CleanApiClient client;
 
-  const RemoteQueryDataSource({@required this.client});
+  const RemoteQueryDataSource({this.client});
 
   /// Read [pageSize] amount of data from [client] based on [queryParams] with
   /// page equals to [pageNumber]
@@ -23,7 +23,7 @@ abstract class RemoteMutationDataSource<T extends EquatableEntity,
     U extends MutationParams<T>, V extends DeletionParams<T>> {
   final CleanApiClient client;
 
-  const RemoteMutationDataSource({@required this.client});
+  const RemoteMutationDataSource({this.client});
 
   /// Create data with [params] and return T as the result.
   Future<T> create({@required U params});

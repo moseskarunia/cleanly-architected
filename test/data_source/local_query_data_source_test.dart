@@ -76,6 +76,10 @@ void main() {
     dataSource = _TestEntityLocalQueryDataSource(storage: mockStorage);
   });
 
+  test('storage should be assigned', () {
+    expect(dataSource.storage, mockStorage);
+  });
+
   group('putAll', () {
     group('should not do anything if ', () {
       test('storageName null', () async {
