@@ -1,6 +1,6 @@
 name: cleanly_architected_core
 description: A flutter project to help set up clean architecture with less boilerplate.
-version: 0.0.1
+version: 0.0.2
 repository: https://github.com/moseskarunia/cleanly-architected
 
 environment:
