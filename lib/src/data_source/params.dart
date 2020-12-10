@@ -17,12 +17,19 @@ class NoQueryParams<T extends EquatableEntity> extends QueryParams<T> {
 
 /// Mutation parameters of [RemoteMutationDataSource]'s [create] and [update].
 abstract class MutationParams<T extends EquatableEntity> extends Equatable {
-  /// Will be used as key in [LocalMutationDataSource]'s putAll
-  String get id;
-
   const MutationParams();
 
-  /// Will be used as key in [LocalMutationDataSource]'s putAll
+  /// Will be used as values for in [LocalMutationDataSource]'s putAll.
+  /// The key should be field name, and the value is the value of cached form
+  /// value.
+  ///
+  /// For example if there are 2 fields, name and address, the return should be:
+  /// ```
+  /// {
+  ///   'name': 'John Doe',
+  ///   'address': 'Sesame Street 18'
+  /// }
+  /// ```
   Map<String, dynamic> toJson();
 }
 
@@ -33,9 +40,6 @@ class NoMutationParams<T extends EquatableEntity> extends MutationParams<T> {
 
   @override
   Map<String, dynamic> toJson() => null;
-
-  @override
-  String get id => null;
 }
 
 /// Deletion parameters of [RemoteMutationDataSource]'s [delete]

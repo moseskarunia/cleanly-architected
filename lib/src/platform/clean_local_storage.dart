@@ -40,7 +40,7 @@ abstract class CleanLocalStorage {
   /// ```
   Future<void> putAll({
     @required String storageName,
-    @required Map<String, Map<String, dynamic>> data,
+    @required Map<String, dynamic> data,
   });
 
   /// Delete data from local [storageName]. If [key] is provided,

@@ -21,7 +21,13 @@ abstract class LocalMutationDataSource<T extends EquatableEntity,
 
   /// Put all [data] to the [storage]. You need to convert it into a key value
   /// pair in the implementation, which matches [storage.putAll()].
-  Future<void> putAll({@required U data});
+  Future<void> putAll({@required U data}) async {
+    if (storageName == null || storageName.isEmpty || storage == null) {
+      return;
+    }
+
+    await storage.putAll(storageName: storageName, data: data.toJson());
+  }
 
   /// Removes all the data under [st
   /// orageName] if [key] is not provided,

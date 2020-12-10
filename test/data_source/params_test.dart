@@ -28,7 +28,6 @@ void main() {
       final q = NoMutationParams<_TestClass>();
       expect(q.props, []);
       expect(q.toJson(), null);
-      expect(q.id, null);
       expect(q, isA<MutationParams<_TestClass>>());
     });
   });
