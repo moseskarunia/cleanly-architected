@@ -3,18 +3,18 @@ name: cleanly_architected_core
 on:
   push:
     paths: 
-      - "core/**"
-      - ".github/workflows/core.yaml"
+      - "packages/cleanly_architected_core/**"
+      - ".github/workflows/cleanly_architected_core.yaml"
   pull_request:
     paths: 
-      - "core/**"
-      - ".github/workflows/core.yaml"
+      - "packages/cleanly_architected_core/**"
+      - ".github/workflows/cleanly_architected_core.yaml"
 
 jobs:
   build:
     defaults:
       run:
-        working-directory: core/
+        working-directory: packages/cleanly_architected_core
     runs-on: ubuntu-latest
 
     steps:
