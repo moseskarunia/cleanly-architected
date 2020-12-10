@@ -37,7 +37,11 @@ abstract class LocalQueryDataSource<T extends EquatableEntity,
 
   /// Put all [data] to the [storage]. You need to convert it into a key value
   /// pair in the implementation, which matches [storage.putAll()]
-  Future<void> putAll({@required List<T> data});
+  Future<void> putAll({@required List<T> data}) async {
+    if (storage == null) {
+      return;
+    }
+  }
 
   /// Removes all the data under [storageName] if [key] is not provided,
   /// and removes only the specified data under [key] if specified.
