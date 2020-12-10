@@ -1,0 +1,19 @@
+name: cleanly_architected_state_manager_bloc
+description: State manager for cleanly architected using bloc / cubit.
+version: 0.0.1
+repository: https://github.com/moseskarunia/cleanly-architected
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cleanly_architected_core: "^0.0.1"
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
