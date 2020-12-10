@@ -3,7 +3,6 @@ import 'package:cleanly_architected/src/data_source/params.dart';
 import 'package:cleanly_architected/src/entity/equatable_entity.dart';
 import 'package:cleanly_architected/src/platform/clean_local_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meta/meta.dart';
 import 'package:mockito/mockito.dart';
 
 class _TestEntity extends EquatableEntity {
@@ -20,8 +19,40 @@ class _TestEntity extends EquatableEntity {
 
 class _TestEntityLocalQueryDataSource
     extends LocalQueryDataSource<_TestEntity, NoQueryParams<_TestEntity>> {
-  const _TestEntityLocalQueryDataSource({@required CleanLocalStorage storage})
+  const _TestEntityLocalQueryDataSource({CleanLocalStorage storage})
+      : super(storage: storage, storageName: 'test-storage');
+
+  @override
+  Future<void> delete({String key}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<_TestEntity>> read({NoQueryParams<_TestEntity> params}) {
+    throw UnimplementedError();
+  }
+}
+
+class _TestEntityLocalQueryDataSource2
+    extends LocalQueryDataSource<_TestEntity, NoQueryParams<_TestEntity>> {
+  const _TestEntityLocalQueryDataSource2({CleanLocalStorage storage})
       : super(storage: storage);
+
+  @override
+  Future<void> delete({String key}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<_TestEntity>> read({NoQueryParams<_TestEntity> params}) {
+    throw UnimplementedError();
+  }
+}
+
+class _TestEntityLocalQueryDataSource3
+    extends LocalQueryDataSource<_TestEntity, NoQueryParams<_TestEntity>> {
+  const _TestEntityLocalQueryDataSource3({CleanLocalStorage storage})
+      : super(storage: storage, storageName: '');
 
   @override
   Future<void> delete({String key}) {
@@ -37,13 +68,6 @@ class _TestEntityLocalQueryDataSource
 class MockStorage extends Mock implements CleanLocalStorage {}
 
 void main() {
-  final fixtures = [
-    _TestEntity(id: '1', name: 'Apple'),
-    _TestEntity(id: '2', name: 'Orange'),
-    _TestEntity(id: '3', name: 'Grape'),
-    _TestEntity(id: '4', name: 'Pineapple'),
-    _TestEntity(id: '5', name: 'Banana'),
-  ];
   MockStorage mockStorage;
   _TestEntityLocalQueryDataSource dataSource;
 
@@ -53,13 +77,59 @@ void main() {
   });
 
   group('putAll', () {
-    test('should not do anything if storage null', () async {
-      await dataSource.putAll(data: [...fixtures]);
-      verifyZeroInteractions(mockStorage);
+    group('should not do anything if ', () {
+      test('storageName null', () async {
+        final dataSource2 =
+            _TestEntityLocalQueryDataSource2(storage: mockStorage);
+        await dataSource2.putAll(data: []);
+        verifyZeroInteractions(mockStorage);
+      });
+      test('storageName empty', () async {
+        final dataSource3 =
+            _TestEntityLocalQueryDataSource3(storage: mockStorage);
+        await dataSource3.putAll(data: []);
+        verifyZeroInteractions(mockStorage);
+      });
+      test('storage null', () async {
+        dataSource = _TestEntityLocalQueryDataSource(storage: null);
+        await dataSource.putAll(data: []);
+        verifyZeroInteractions(mockStorage);
+      });
     });
 
-    test('should exclude data which id returns null', () async {});
-    test('should exclude data which toJson returns null', () async {});
-    test('should putAll data to storage', () async {});
+    test('should exclude data which id returns null', () async {
+      final fixtures = [
+        _TestEntity(id: null, name: 'Apple'),
+        _TestEntity(id: '2', name: 'Orange'),
+        _TestEntity(id: null, name: 'Grape'),
+        _TestEntity(id: '4', name: 'Pineapple'),
+        _TestEntity(id: null, name: 'Banana'),
+      ];
+
+      await dataSource.putAll(data: fixtures);
+
+      verify(mockStorage.putAll(storageName: 'test-storage', data: {
+        '2': {'id': '2', 'name': 'Orange'},
+        '4': {'id': '4', 'name': 'Pineapple'}
+      }));
+    });
+    test('should putAll data to storage', () async {
+      final fixtures = [
+        _TestEntity(id: '1', name: 'Apple'),
+        _TestEntity(id: '2', name: 'Orange'),
+        _TestEntity(id: '3', name: 'Grape'),
+        _TestEntity(id: '4', name: 'Pineapple'),
+        _TestEntity(id: '5', name: 'Banana'),
+      ];
+      await dataSource.putAll(data: fixtures);
+
+      verify(mockStorage.putAll(storageName: 'test-storage', data: {
+        '1': {'id': '1', 'name': 'Apple'},
+        '2': {'id': '2', 'name': 'Orange'},
+        '3': {'id': '3', 'name': 'Grape'},
+        '4': {'id': '4', 'name': 'Pineapple'},
+        '5': {'id': '5', 'name': 'Banana'}
+      }));
+    });
   });
 }
