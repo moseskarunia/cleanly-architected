@@ -8,6 +8,7 @@ Everyone agrees architecture is good, but it considerably slows the development 
 
 ## Planned Updates
 - Form caching in Mutation Repository: Make it easier for you to save form state, to enable user to continue editing later.
+- Sort when querying
 
 Feel free to submit PR for them. The functions already available in the data source though, the repository just need to wire things up.
 
