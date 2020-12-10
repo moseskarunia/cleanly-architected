@@ -1,6 +1,6 @@
 # cleanly_architected
 
-![cleanly_architected_master_ci](https://github.com/moseskarunia/cleanly-architected/workflows/cleanly_architected_master_ci/badge.svg?branch=master)
+![cleanly_architected_master_ci](https://github.com/moseskarunia/cleanly-architected/workflows/cleanly_architected_master_ci/badge.svg?branch=master) [![codecov](https://codecov.io/gh/moseskarunia/cleanly-architected/branch/master/graph/badge.svg?token=3AT2NUV710)](https://codecov.io/gh/moseskarunia/cleanly-architected)
 
 A flutter library to help you lay down the foundation of clean architecture without having to a lot to set up initially. This library heavily utilizes generics to achieve this.
 
