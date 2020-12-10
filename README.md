@@ -6,6 +6,12 @@ A flutter library to help you lay down the foundation of clean architecture with
 
 Everyone agrees architecture is good, but it considerably slows the development initiation process. Multiply it by implementing the foundation each time you want to start a project, then new projects won't spark joy anymore. Unfortunately, we can't ditch it even though it doesn't spark joy (sorry Marie Kondo), because a maintainable app needs to be architected cleanly.
 
+## Planned Updates
+- Form caching in Mutation Repository: Make it easier for you to save form state, to enable user to continue editing later.
+- Mutation delete in Mutation Repository: Enables deleting data from local / server.
+
+Feel free to submit PR for them. The functions already available in the data source though, the repository just need to wire things up.
+
 ## What is Clean Architecture?
 
 For you who is new to the architecture world, I highly advise you to follow through [Reso Coder's tutorial on TDD](https://resocoder.com/category/tutorials/flutter/tdd-clean-architecture/). This library is my iteration on that tutorial. And I think you need to understand it first before trying to use this library.
