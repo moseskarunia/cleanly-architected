@@ -356,7 +356,48 @@ void main() {
   });
 
   group('refreshAll', () {
-    test('will not do anything if remoteDataSource null', () async {
+    test(
+      'will return cachedData and ignores queryParams if no data source',
+      () async {
+        repo = QueryRepository();
+        repo.cachedData = [
+          _TestEntity('1', 'Orange'),
+          _TestEntity('2', 'Strawberry'),
+          _TestEntity('3', 'Apple'),
+        ];
+
+        final results = await repo.refreshAll(
+          pageSize: 2,
+          queryParams: _TestEntityQueryParams('abc'),
+        );
+
+        expect((results as Right).value, [
+          _TestEntity('1', 'Orange'),
+          _TestEntity('2', 'Strawberry'),
+        ]);
+        verifyNoMoreInteractions(mockLocalDataSource);
+        verifyNoMoreInteractions(mockRemoteDataSource);
+      },
+    );
+    test('will call localDataSource only if remoteDataSource null', () async {
+      repo = QueryRepository(localQueryDataSource: mockLocalDataSource);
+
+      final results = await repo.refreshAll(
+        pageSize: 5,
+        queryParams: _TestEntityQueryParams('abc'),
+      );
+
+      // TODO:
+    });
+
+    test('will call localDataSource if remoteDataSource null', () async {
+      repo = QueryRepository(localQueryDataSource: mockLocalDataSource);
+
+      final results = await repo.refreshAll(
+        pageSize: 5,
+        queryParams: _TestEntityQueryParams('abc'),
+      );
+
       // TODO:
     });
     group('will immediately call remoteDataSource at page 1', () {

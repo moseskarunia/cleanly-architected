@@ -99,6 +99,9 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
     @required int pageSize,
     @required U queryParams,
   }) async {
+    if (remoteQueryDataSource == null && localQueryDataSource == null) {
+      return Right(cachedData.take(pageSize).toList());
+    }
     throw UnimplementedError();
   }
 
@@ -115,6 +118,8 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
     endOfList = localResults.length < pageSize;
   }
 
+  /// Attempt to query remotely with given params, if succeed, will merge the
+  /// data with [cachedData], removes duplicates, and store locally.
   Future<void> _queryRemotely({
     @required int pageSize,
     @required int pageNumber,
