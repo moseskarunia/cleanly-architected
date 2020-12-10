@@ -106,13 +106,18 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
     }
 
     if (remoteQueryDataSource == null) {
-      final results = await localQueryDataSource.read(params: queryParams);
+      await _queryLocally(pageSize: pageSize, queryParams: queryParams);
       endOfList = true;
-      lastQueryParams = queryParams;
-      cachedData = results;
       return Right(cachedData.take(pageSize).toList());
     }
-    throw UnimplementedError();
+
+    await _queryRemotely(
+      pageNumber: 1,
+      pageSize: pageSize,
+      queryParams: queryParams,
+    );
+
+    return Right(cachedData.take(pageSize).toList());
   }
 
   /// Attempt to query locally with given [queryParams]. The query result

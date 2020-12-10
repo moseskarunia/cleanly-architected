@@ -377,8 +377,8 @@ void main() {
         ]);
         expect(repo.endOfList, true);
         expect(repo.lastQueryParams, _TestEntityQueryParams('abc'));
-        verifyNoMoreInteractions(mockLocalDataSource);
-        verifyNoMoreInteractions(mockRemoteDataSource);
+        verifyZeroInteractions(mockLocalDataSource);
+        verifyZeroInteractions(mockRemoteDataSource);
       },
     );
     test('will call localDataSource only if remoteDataSource null', () async {
@@ -422,12 +422,64 @@ void main() {
       verifyZeroInteractions(mockRemoteDataSource);
     });
 
-    group('will immediately call remoteDataSource at page 1', () {
+    group('will call remoteDataSource', () {
+      Future<void> _performTest() async {
+        when(mockRemoteDataSource.read(
+          pageNumber: anyNamed('pageNumber'),
+          pageSize: anyNamed('pageSize'),
+          queryParams: anyNamed('queryParams'),
+        )).thenAnswer(
+          (_) async => [
+            _TestEntity('1', 'Orange'),
+            _TestEntity('2', 'Strawberry'),
+            _TestEntity('3', 'Pineapple'),
+          ],
+        );
+
+        final results = await repo.refreshAll(
+          pageSize: 3,
+          queryParams: _TestEntityQueryParams('abc'),
+        );
+
+        expect((results as Right).value, [
+          _TestEntity('1', 'Orange'),
+          _TestEntity('2', 'Strawberry'),
+          _TestEntity('3', 'Pineapple'),
+        ]);
+        expect(repo.cachedData, [
+          _TestEntity('1', 'Orange'),
+          _TestEntity('2', 'Strawberry'),
+          _TestEntity('3', 'Pineapple'),
+        ]);
+        expect(repo.endOfList, false);
+        expect(repo.lastQueryParams, _TestEntityQueryParams('abc'));
+      }
+
       test('', () async {
-        // TODO:
+        await _performTest();
+        verifyInOrder([
+          mockRemoteDataSource.read(
+            pageNumber: 1,
+            pageSize: 3,
+            queryParams: _TestEntityQueryParams('abc'),
+          ),
+          mockLocalDataSource.putAll(data: [
+            _TestEntity('1', 'Orange'),
+            _TestEntity('2', 'Strawberry'),
+            _TestEntity('3', 'Pineapple'),
+          ]),
+        ]);
       });
-      test('but no localDataSource caching', () async {
-        // TODO:
+
+      test('but without local caching if localDataSource null', () async {
+        repo = QueryRepository(remoteQueryDataSource: mockRemoteDataSource);
+        await _performTest();
+        verify(mockRemoteDataSource.read(
+          pageNumber: 1,
+          pageSize: 3,
+          queryParams: _TestEntityQueryParams('abc'),
+        ));
+        verifyZeroInteractions(mockLocalDataSource);
       });
     });
   });
