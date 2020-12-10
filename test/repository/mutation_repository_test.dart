@@ -46,9 +46,10 @@ class _TestEntityMutationParams extends MutationParams<_TestEntity> {
 class _TestEntityDeletionParams extends DeletionParams<_TestEntity> {
   final String name;
 
-  _TestEntityDeletionParams(this.name);
+  _TestEntityDeletionParams(this.name, [String entityId])
+      : super(entityId: entityId);
   @override
-  List<Object> get props => [name];
+  List<Object> get props => [name, entityId];
 }
 
 class MockLocalMutationDataSource extends Mock
@@ -65,7 +66,7 @@ class MockLocalQueryDataSource extends Mock
 
 void main() {
   final mutationParamsFixture = _TestEntityMutationParams('abc');
-  final deletionParamsFixture = _TestEntityDeletionParams('abc');
+  final deletionParamsFixture = _TestEntityDeletionParams('abc', '1');
   MockRemoteMutationDataSource mockRemoteDataSource;
   MockLocalQueryDataSource mockLocalQueryDataSource;
   MutationRepository<_TestEntity, _TestEntityMutationParams,
@@ -257,6 +258,60 @@ void main() {
             data: <String, dynamic>{'id': 1},
           ),
         );
+      });
+    });
+
+    test('return CleanFailure NO_DATA_SOURCE_AVAILABLE', () async {
+      repo = MutationRepository();
+
+      final result = await repo.delete(params: deletionParamsFixture);
+      expect(
+        (result as Left).value,
+        const CleanFailure(name: 'NO_DATA_SOURCE_AVAILABLE'),
+      );
+    });
+
+    test('should delete both remote and local', () async {
+      await repo.delete(params: deletionParamsFixture);
+
+      verifyInOrder([
+        mockRemoteDataSource.delete(params: deletionParamsFixture),
+        mockLocalQueryDataSource.delete(key: '1')
+      ]);
+    });
+
+    test('should not delete remote if remote data source null', () async {
+      repo = MutationRepository(localQueryDataSource: mockLocalQueryDataSource);
+
+      await repo.delete(params: deletionParamsFixture);
+      verify(mockLocalQueryDataSource.delete(key: '1'));
+      verifyZeroInteractions(mockRemoteDataSource);
+    });
+
+    group('should not delete local', () {
+      final deletionParamsWithNullEntityId =
+          _TestEntityDeletionParams('Orange');
+      final deletionParamsWithEmptyEntityId =
+          _TestEntityDeletionParams('Orange', '');
+      tearDown(() {
+        verifyZeroInteractions(mockLocalQueryDataSource);
+      });
+      test('if localDataSource is null', () async {
+        repo = MutationRepository(
+          remoteMutationDataSource: mockRemoteDataSource,
+        );
+        await repo.delete(params: deletionParamsFixture);
+        verify(mockRemoteDataSource.delete(params: deletionParamsFixture));
+      });
+      test('if params.entityId is null', () async {
+        await repo.delete(params: deletionParamsWithNullEntityId);
+        verify(mockRemoteDataSource.delete(
+            params: deletionParamsWithNullEntityId));
+      });
+      test('if params.entityId is empty', () async {
+        await repo.delete(params: deletionParamsWithEmptyEntityId);
+        verify(mockRemoteDataSource.delete(
+            params: deletionParamsWithEmptyEntityId));
       });
     });
   });

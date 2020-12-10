@@ -21,7 +21,7 @@ class MutationRepository<T extends EquatableEntity, U extends MutationParams<T>,
   final LocalQueryDataSource<T, W> localQueryDataSource;
 
   MutationRepository({
-    @required this.remoteMutationDataSource,
+    this.remoteMutationDataSource,
     this.localQueryDataSource,
   });
 
@@ -69,10 +69,26 @@ class MutationRepository<T extends EquatableEntity, U extends MutationParams<T>,
 
   /// Request deletion to the remote and local data source. If [localOnly] is
   /// true, will only delete from local repo, otherwise, both.
-  Future<Either<CleanFailure, Unit>> delete(
-      {V params, bool localOnly = true}) async {
+  ///
+  /// Unit is just a dartz term for 'void'.
+  Future<Either<CleanFailure, Unit>> delete({@required V params}) async {
     try {
-      await remoteMutationDataSource.delete(params: params);
+      if (remoteMutationDataSource == null && localQueryDataSource == null) {
+        throw CleanException(name: 'NO_DATA_SOURCE_AVAILABLE');
+      }
+
+      if (remoteMutationDataSource != null) {
+        await remoteMutationDataSource.delete(params: params);
+      }
+
+      if (localQueryDataSource != null &&
+          params.entityId != null &&
+          params.entityId.isNotEmpty) {
+        await localQueryDataSource.delete(key: params.entityId);
+      }
+
+      /// unit is just dartz term for 'void'
+      return Right(unit);
     } on CleanException catch (e) {
       return Left(CleanFailure(name: e.name, data: e.data, group: e.group));
     } catch (_) {

@@ -43,10 +43,17 @@ class NoMutationParams<T extends EquatableEntity> extends MutationParams<T> {
 }
 
 /// Deletion parameters of [RemoteMutationDataSource]'s [delete]
-abstract class DeletionParams<T extends EquatableEntity> extends Equatable {}
+abstract class DeletionParams<T extends EquatableEntity> extends Equatable {
+  /// Used to delete data in localQueryDataSource automatically after
+  /// calling delete in remote.
+  final String entityId;
+
+  const DeletionParams({this.entityId});
+}
 
 /// Use this class if you don't need to add anything to the [DeletionParams]
 class NoDeletionParams<T extends EquatableEntity> extends DeletionParams<T> {
+  const NoDeletionParams({String entityId}) : super(entityId: entityId);
   @override
-  List<Object> get props => [];
+  List<Object> get props => [entityId];
 }
