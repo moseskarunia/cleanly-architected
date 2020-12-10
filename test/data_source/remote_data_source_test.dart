@@ -36,15 +36,6 @@ class _TestEntityRemoteMutationDataSource extends RemoteMutationDataSource<
   _TestEntityRemoteMutationDataSource({CleanApiClient client})
       : super(client: client);
   @override
-  Future<List<_TestEntity>> read({
-    int pageSize,
-    int pageNumber,
-    NoQueryParams<_TestEntity> queryParams,
-  }) {
-    throw UnimplementedError();
-  }
-
-  @override
   Future<_TestEntity> create({NoMutationParams<_TestEntity> params}) {
     throw UnimplementedError();
   }
