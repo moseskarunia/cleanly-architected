@@ -1,0 +1,38 @@
+name: cleanly_architected_core
+
+on:
+  push:
+    paths: 
+      - "packages/cleanly_architected_core/**"
+      - ".github/workflows/cleanly_architected_core.yaml"
+  pull_request:
+    paths: 
+      - "packages/cleanly_architected_core/**"
+      - ".github/workflows/cleanly_architected_core.yaml"
+
+jobs:
+  build:
+    defaults:
+      run:
+        working-directory: packages/cleanly_architected_core
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v1
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Analyze project source
+        run: flutter analyze lib test
+      - name: Run tests, process code coverage
+        run: flutter test --coverage
+      - name: Check Code Coverage
+        uses: ChicagoFlutter/lcov-cop@v1.0.0
+        with:
+          path: coverage/lcov.info
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Dry Run Publish to Pub Dev
+        run: pub publish --dry-run

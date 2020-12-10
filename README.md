@@ -2,16 +2,11 @@
 
 ![cleanly_architected_master_ci](https://github.com/moseskarunia/cleanly-architected/workflows/cleanly_architected_master_ci/badge.svg?branch=master) [![codecov](https://codecov.io/gh/moseskarunia/cleanly-architected/branch/master/graph/badge.svg?token=3AT2NUV710)](https://codecov.io/gh/moseskarunia/cleanly-architected)
 
-A flutter library to help you lay down the foundation of clean architecture without having to a lot to set up initially. This library heavily utilizes generics to achieve this.
+A flutter library to help you lay down the foundation of clean architecture without having to a lot to set up initially, utilizing the power of generics.
+
+## Introduction 
 
 Everyone agrees architecture is good, but it considerably slows the development initiation process. Multiply it by implementing the foundation each time you want to start a project, then new projects won't spark joy anymore. Unfortunately, we can't ditch it even though it doesn't spark joy (sorry Marie Kondo), because a maintainable app needs to be architected cleanly.
-
-## Planned Updates
-- Form caching in Mutation Repository: Make it easier for you to save form state, to enable user to continue editing later.
-- `SortParams` when querying
-- Subscription data source, repo, and interactor
-
-Feel free to submit PR for them. The functions already available in the data source though, the repository just need to wire things up.
 
 ## What is Clean Architecture?
 

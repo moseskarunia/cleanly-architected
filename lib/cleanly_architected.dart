@@ -1,1 +1,0 @@
-library cleanly_architected;
