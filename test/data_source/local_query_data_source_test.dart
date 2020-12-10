@@ -28,7 +28,7 @@ class _TestEntityLocalQueryDataSource
   }
 
   @override
-  Future<List<_TestEntity>> read({NoQueryParams<_TestEntity> params}) {
+  Future<List<_TestEntity>> read({NoQueryParams<_TestEntity> queryParams}) {
     throw UnimplementedError();
   }
 }
@@ -44,7 +44,7 @@ class _TestEntityLocalQueryDataSource2
   }
 
   @override
-  Future<List<_TestEntity>> read({NoQueryParams<_TestEntity> params}) {
+  Future<List<_TestEntity>> read({NoQueryParams<_TestEntity> queryParams}) {
     throw UnimplementedError();
   }
 }
@@ -60,7 +60,7 @@ class _TestEntityLocalQueryDataSource3
   }
 
   @override
-  Future<List<_TestEntity>> read({NoQueryParams<_TestEntity> params}) {
+  Future<List<_TestEntity>> read({NoQueryParams<_TestEntity> queryParams}) {
     throw UnimplementedError();
   }
 }

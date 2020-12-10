@@ -65,30 +65,36 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
     @required int pageNumber,
     @required U queryParams,
   }) async {
-    int calculatedPageNumber = pageNumber;
-    if (queryParams != lastQueryParams) {
-      calculatedPageNumber = 1;
-    }
+    try {
+      int calculatedPageNumber = pageNumber;
+      if (queryParams != lastQueryParams) {
+        calculatedPageNumber = 1;
+      }
 
-    if ((endOfList && calculatedPageNumber != 1) ||
-        (localQueryDataSource == null && remoteQueryDataSource == null)) {
-      endOfList = true;
-      return Right(cachedData.take(pageNumber * pageSize).toList());
-    }
+      if ((endOfList && calculatedPageNumber != 1) ||
+          (localQueryDataSource == null && remoteQueryDataSource == null)) {
+        endOfList = true;
+        return Right(cachedData.take(pageNumber * pageSize).toList());
+      }
 
-    await _queryLocally(queryParams: queryParams, pageSize: pageSize);
+      await _queryLocally(queryParams: queryParams, pageSize: pageSize);
 
-    if (cachedData.length >= calculatedPageNumber * pageSize) {
+      if (cachedData.length >= calculatedPageNumber * pageSize) {
+        return Right(cachedData.take(calculatedPageNumber * pageSize).toList());
+      }
+
+      await _queryRemotely(
+        pageNumber: calculatedPageNumber,
+        pageSize: pageSize,
+        queryParams: queryParams,
+      );
+
       return Right(cachedData.take(calculatedPageNumber * pageSize).toList());
+    } on CleanException catch (e) {
+      return Left(CleanFailure(name: e.name, data: e.data, group: e.group));
+    } catch (_) {
+      return Left(CleanFailure(name: 'UNEXPECTED_ERROR'));
     }
-
-    await _queryRemotely(
-      pageNumber: calculatedPageNumber,
-      pageSize: pageSize,
-      queryParams: queryParams,
-    );
-
-    return Right(cachedData.take(calculatedPageNumber * pageSize).toList());
   }
 
   /// Immediately call the remote server at page 1 with [pageSize].
@@ -99,25 +105,31 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
     @required int pageSize,
     @required U queryParams,
   }) async {
-    if (remoteQueryDataSource == null && localQueryDataSource == null) {
-      endOfList = true;
-      lastQueryParams = queryParams;
+    try {
+      if (remoteQueryDataSource == null && localQueryDataSource == null) {
+        endOfList = true;
+        lastQueryParams = queryParams;
+        return Right(cachedData.take(pageSize).toList());
+      }
+
+      if (remoteQueryDataSource == null) {
+        await _queryLocally(pageSize: pageSize, queryParams: queryParams);
+        endOfList = true;
+        return Right(cachedData.take(pageSize).toList());
+      }
+
+      await _queryRemotely(
+        pageNumber: 1,
+        pageSize: pageSize,
+        queryParams: queryParams,
+      );
+
       return Right(cachedData.take(pageSize).toList());
+    } on CleanException catch (e) {
+      return Left(CleanFailure(name: e.name, data: e.data, group: e.group));
+    } catch (_) {
+      return Left(CleanFailure(name: 'UNEXPECTED_ERROR'));
     }
-
-    if (remoteQueryDataSource == null) {
-      await _queryLocally(pageSize: pageSize, queryParams: queryParams);
-      endOfList = true;
-      return Right(cachedData.take(pageSize).toList());
-    }
-
-    await _queryRemotely(
-      pageNumber: 1,
-      pageSize: pageSize,
-      queryParams: queryParams,
-    );
-
-    return Right(cachedData.take(pageSize).toList());
   }
 
   /// Attempt to query locally with given [queryParams]. The query result
@@ -127,7 +139,7 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
     if (localQueryDataSource == null) {
       return;
     }
-    final localResults = await localQueryDataSource.read(params: queryParams);
+    final localResults = await localQueryDataSource.read(queryParams: queryParams);
     cachedData = [...localResults];
     lastQueryParams = queryParams;
     endOfList = localResults.length < pageSize;

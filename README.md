@@ -11,8 +11,8 @@ Everyone agrees architecture is good, but it considerably slows the development 
 For you who is new to the architecture world, I highly advise you to follow through [Reso Coder's tutorial on TDD](https://resocoder.com/category/tutorials/flutter/tdd-clean-architecture/). This library is my iteration on that tutorial. And I think you need to understand it first before trying to use this library.
 
 Basically, clean architecture separates the app into several layers, which is independent of each others.
-- Entity: Equivalent to POJO. But this time, it's PODO.
-- Data Source: Layer to contact, surprise, data sources, both local and remote. Remote data sources contacts your server through its API, and local data sources store obtained remote data locally to improve app cold start and reduce user's data usage.
+- Entity: Equivalent to POJO. But this time, it's PODO (Plain Old Dart Object).
+- Data Source: Layer to contact, (surprise) data sources, both local and remote. Remote data sources contacts your server through its API, interfaced through `CleanApiClient`. Local data sources store obtained remote data locally.
 - Repository: It acts as the hub of local and remote data source, cache the data (to prevent repeatedly contacting the data source) and also the layer to handle exceptions, converts it into Failure, and return it with dartz union type. This way, our app will be more robust and easier to manage by handling exceptions as early as possible.
 - Interactor: Holds logics such as validations. An interactor can depends on other interactor.
 - State Manager: I personally use bloc. But for the sake of liberty, I'll put the state management library separately.
