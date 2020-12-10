@@ -14,6 +14,11 @@ class _TestEntity extends EquatableEntity {
 
   @override
   List<Object> get props => [id, name];
+
+  @override
+  Map<String, dynamic> toJson() {
+    throw UnimplementedError();
+  }
 }
 
 class _TestEntityQueryParams extends QueryParams<_TestEntity> {

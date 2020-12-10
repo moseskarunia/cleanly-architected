@@ -6,9 +6,11 @@ import 'package:meta/meta.dart';
 /// The data source which responsible to query data from the remote client.
 abstract class RemoteQueryDataSource<T extends EquatableEntity,
     U extends QueryParams<T>> {
+  /// Api client which interfaced with [CleanApiClient]. Feel free to use your
+  /// own abstract and put it in this class's implementation
   final CleanApiClient client;
 
-  const RemoteQueryDataSource({@required this.client});
+  const RemoteQueryDataSource({this.client});
 
   /// Read [pageSize] amount of data from [client] based on [queryParams] with
   /// page equals to [pageNumber]
@@ -21,9 +23,11 @@ abstract class RemoteQueryDataSource<T extends EquatableEntity,
 /// [CleanException] when calling that function.
 abstract class RemoteMutationDataSource<T extends EquatableEntity,
     U extends MutationParams<T>, V extends DeletionParams<T>> {
+  /// Api client which interfaced with [CleanApiClient]. Feel free to use your
+  /// own abstract and put it in this class's implementation
   final CleanApiClient client;
 
-  const RemoteMutationDataSource({@required this.client});
+  const RemoteMutationDataSource({this.client});
 
   /// Create data with [params] and return T as the result.
   Future<T> create({@required U params});

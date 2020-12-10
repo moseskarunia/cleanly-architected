@@ -7,6 +7,11 @@ class _TestClass extends EquatableEntity {
 
   @override
   List<Object> get props => [id];
+
+  @override
+  Map<String, dynamic> toJson() {
+    throw UnimplementedError();
+  }
 }
 
 void main() {
@@ -22,6 +27,7 @@ void main() {
     test('props', () {
       final q = NoMutationParams<_TestClass>();
       expect(q.props, []);
+      expect(q.toJson(), null);
       expect(q, isA<MutationParams<_TestClass>>());
     });
   });
