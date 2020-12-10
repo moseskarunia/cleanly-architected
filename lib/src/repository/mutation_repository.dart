@@ -16,30 +16,46 @@ import 'package:meta/meta.dart';
 class MutationRepository<T extends EquatableEntity, U extends MutationParams<T>,
     V extends DeletionParams<T>> {
   final RemoteMutationDataSource<T, U, V> remoteMutationDataSource;
-  final LocalMutationDataSource<T, U> localDataSource;
+  final LocalMutationDataSource<T, U> localMutationDataSource;
 
   MutationRepository({
     this.remoteMutationDataSource,
-    this.localDataSource,
+    this.localMutationDataSource,
   });
 
+  /// Request data creation to both remote and local (if data source is not
+  /// null)
   Future<Either<CleanFailure, T>> create({@required U params}) async {
     try {
-      //
+      await remoteMutationDataSource.create(params: params);
     } on CleanException catch (e) {
       return Left(CleanFailure(name: e.name, data: e.data, group: e.group));
     } catch (_) {
-      return Left(CleanFailure(name: 'UNEXPECTED_ERROR'));
+      return Left(const CleanFailure(name: 'UNEXPECTED_ERROR'));
     }
   }
 
+  /// Request data update to both remote and local (if data source is not null)
   Future<Either<CleanFailure, T>> update({@required U params}) async {
     try {
-      //
+      await remoteMutationDataSource.update(params: params);
     } on CleanException catch (e) {
       return Left(CleanFailure(name: e.name, data: e.data, group: e.group));
     } catch (_) {
-      return Left(CleanFailure(name: 'UNEXPECTED_ERROR'));
+      return Left(const CleanFailure(name: 'UNEXPECTED_ERROR'));
+    }
+  }
+
+  /// Request deletion to the remote and local data source. If [localOnly] is
+  /// true, will only delete from local repo, otherwise, both.
+  Future<Either<CleanFailure, Unit>> delete(
+      {V params, bool localOnly = true}) async {
+    try {
+      await remoteMutationDataSource.delete(params: params);
+    } on CleanException catch (e) {
+      return Left(CleanFailure(name: e.name, data: e.data, group: e.group));
+    } catch (_) {
+      return Left(const CleanFailure(name: 'UNEXPECTED_ERROR'));
     }
   }
 }

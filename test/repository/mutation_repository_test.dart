@@ -1,11 +1,10 @@
-import 'dart:math';
-
+import 'package:cleanly_architected/src/clean_error.dart';
 import 'package:cleanly_architected/src/data_source/local_data_source.dart';
 import 'package:cleanly_architected/src/data_source/params.dart';
 import 'package:cleanly_architected/src/data_source/remote_data_source.dart';
 import 'package:cleanly_architected/src/entity/equatable_entity.dart';
 import 'package:cleanly_architected/src/repository/mutation_repository.dart';
-import 'package:flutter/foundation.dart';
+import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
@@ -54,6 +53,8 @@ class MockRemoteMutationDataSource extends Mock
             _TestEntityDeletionParams> {}
 
 void main() {
+  final mutationParamsFixture = _TestEntityMutationParams('abc');
+  final deletionParamsFixture = _TestEntityDeletionParams('abc');
   MockLocalMutationDataSource mockLocalDataSource;
   MockRemoteMutationDataSource mockRemoteDataSource;
   MutationRepository<_TestEntity, _TestEntityMutationParams,
@@ -63,13 +64,121 @@ void main() {
     mockLocalDataSource = MockLocalMutationDataSource();
     mockRemoteDataSource = MockRemoteMutationDataSource();
     repo = MutationRepository(
-      localDataSource: mockLocalDataSource,
+      localMutationDataSource: mockLocalDataSource,
       remoteMutationDataSource: mockRemoteDataSource,
     );
   });
 
   test('should assign data sources correctly', () {
-    expect(repo.localDataSource, mockLocalDataSource);
+    expect(repo.localMutationDataSource, mockLocalDataSource);
     expect(repo.remoteMutationDataSource, mockRemoteDataSource);
+  });
+
+  group('create', () {
+    group('should handle exception', () {
+      test('for UNEXPECTED_ERROR', () async {
+        when(mockRemoteDataSource.create(params: anyNamed('params')))
+            .thenThrow(Exception());
+
+        final result = await repo.create(params: mutationParamsFixture);
+
+        expect(
+          (result as Left).value,
+          const CleanFailure(name: 'UNEXPECTED_ERROR'),
+        );
+      });
+      test('for CleanException', () async {
+        when(mockRemoteDataSource.create(params: anyNamed('params'))).thenThrow(
+          const CleanException(
+            name: 'TEST_ERROR',
+            group: 'TEST',
+            data: <String, dynamic>{'id': 1},
+          ),
+        );
+
+        final result = await repo.create(params: mutationParamsFixture);
+
+        expect(
+          (result as Left).value,
+          const CleanFailure(
+            name: 'TEST_ERROR',
+            group: 'TEST',
+            data: <String, dynamic>{'id': 1},
+          ),
+        );
+      });
+    });
+  });
+
+  group('update', () {
+    group('should handle exception', () {
+      test('for UNEXPECTED_ERROR', () async {
+        when(mockRemoteDataSource.update(params: anyNamed('params')))
+            .thenThrow(Exception());
+
+        final result = await repo.update(params: mutationParamsFixture);
+
+        expect(
+          (result as Left).value,
+          const CleanFailure(name: 'UNEXPECTED_ERROR'),
+        );
+      });
+      test('for CleanException', () async {
+        when(mockRemoteDataSource.update(params: anyNamed('params'))).thenThrow(
+          const CleanException(
+            name: 'TEST_ERROR',
+            group: 'TEST',
+            data: <String, dynamic>{'id': 1},
+          ),
+        );
+
+        final result = await repo.update(params: mutationParamsFixture);
+
+        expect(
+          (result as Left).value,
+          const CleanFailure(
+            name: 'TEST_ERROR',
+            group: 'TEST',
+            data: <String, dynamic>{'id': 1},
+          ),
+        );
+      });
+    });
+  });
+
+  group('delete', () {
+    group('should handle exception', () {
+      test('for UNEXPECTED_ERROR', () async {
+        when(mockRemoteDataSource.delete(params: anyNamed('params')))
+            .thenThrow(Exception());
+
+        final result = await repo.delete(params: deletionParamsFixture);
+
+        expect(
+          (result as Left).value,
+          const CleanFailure(name: 'UNEXPECTED_ERROR'),
+        );
+      });
+      test('for CleanException', () async {
+        when(mockRemoteDataSource.delete(params: anyNamed('params'))).thenThrow(
+          const CleanException(
+            name: 'TEST_ERROR',
+            group: 'TEST',
+            data: <String, dynamic>{'id': 1},
+          ),
+        );
+
+        final result = await repo.delete(params: deletionParamsFixture);
+
+        expect(
+          (result as Left).value,
+          const CleanFailure(
+            name: 'TEST_ERROR',
+            group: 'TEST',
+            data: <String, dynamic>{'id': 1},
+          ),
+        );
+      });
+    });
   });
 }
