@@ -135,10 +135,13 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
   /// Removes data with key equals to [id] from localQueryDataSource and
   /// remoteQueryDataSource.
   ///
-  /// * [id] If null, will delete the entire table.
+  /// * [id] is optional, so that you can use this to clear the entire
+  /// collection if null (implement this behavior in localQueryDataSource's
+  /// delete)
   Future<Either<CleanFailure, Unit>> deleteLocalData({String id}) async {
     try {
-      //
+      await localQueryDataSource.delete(key: id);
+      return Right(unit);
     } on CleanException catch (e) {
       return Left(CleanFailure(name: e.name, data: e.data, group: e.group));
     } catch (_) {

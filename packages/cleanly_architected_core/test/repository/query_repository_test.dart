@@ -572,6 +572,51 @@ void main() {
     });
   });
 
+  group('deleteLocalData', () {
+    group('should handle exception', () {
+      test('and return CleanFailure UNEXPECTED_ERROR', () async {
+        when(mockLocalDataSource.delete(key: anyNamed('key')))
+            .thenThrow(Exception());
+
+        final result = await repo.deleteLocalData(id: '1');
+
+        expect((result as Left).value,
+            const CleanFailure(name: 'UNEXPECTED_ERROR'));
+      });
+      test('and return CleanFailure with expected values', () async {
+        when(mockLocalDataSource.delete(key: anyNamed('key'))).thenThrow(
+          const CleanException(
+            name: 'TEST_ERROR',
+            group: 'TEST',
+            data: <String, dynamic>{'id': 1},
+          ),
+        );
+
+        final result = await repo.deleteLocalData(id: '1');
+
+        expect(
+          (result as Left).value,
+          const CleanFailure(
+            name: 'TEST_ERROR',
+            group: 'TEST',
+            data: <String, dynamic>{'id': 1},
+          ),
+        );
+      });
+    });
+
+    test('should call localDataSource.delete with id', () async {
+      await repo.deleteLocalData(id: '1');
+      verify(mockLocalDataSource.delete(key: '1'));
+      verifyZeroInteractions(mockRemoteDataSource);
+    });
+
+    test('should call localDataSource.delete without id', () async {
+      await repo.deleteLocalData();
+      verify(mockLocalDataSource.delete());
+      verifyZeroInteractions(mockRemoteDataSource);
+    });
+  });
   group('putLocalData', () {
     final fixture = [_TestEntity('1', 'Apple')];
     group('should handle exception', () {
