@@ -1,5 +1,4 @@
 import 'package:cleanly_architected_core/src/entity/clean_error.dart';
-import 'package:cleanly_architected_core/src/data_source/local_data_source.dart';
 import 'package:cleanly_architected_core/src/data_source/params.dart';
 import 'package:cleanly_architected_core/src/data_source/remote_data_source.dart';
 import 'package:cleanly_architected_core/src/entity/equatable_entity.dart';
@@ -14,31 +13,18 @@ import 'package:meta/meta.dart';
 /// and override its properties. Otherwise, you just need to register it
 /// to your service locator (such as [GetIt](https://pub.dev/packages/get_it))
 /// with different T.
-class FormRepository<T extends EquatableEntity, U extends FormParams<T>,
-    V extends QueryParams<T>> {
+class FormRepository<T extends EquatableEntity, U extends FormParams<T>> {
   final RemoteFormDataSource<T, U> remoteMutationDataSource;
 
-  /// To cache the result after creating.
-  final LocalQueryDataSource<T, V> localQueryDataSource;
-
   FormRepository({
-    this.remoteMutationDataSource,
-    this.localQueryDataSource,
+    @required this.remoteMutationDataSource,
   });
 
   /// Request data creation to both remoteDataSource. If succeed, and result
   /// not null, cache in local.
   Future<Either<CleanFailure, T>> create({@required U params}) async {
     try {
-      if (remoteMutationDataSource == null) {
-        throw CleanException(name: 'NO_REMOTE_DATA_SOURCE');
-      }
       final result = await remoteMutationDataSource.create(params: params);
-
-      if (result != null) {
-        await localQueryDataSource?.putAll(data: [result]);
-      }
-
       return Right(result);
     } on CleanException catch (e) {
       return Left(CleanFailure(name: e.name, data: e.data, group: e.group));
@@ -51,15 +37,7 @@ class FormRepository<T extends EquatableEntity, U extends FormParams<T>,
   /// not null, cache in local.
   Future<Either<CleanFailure, T>> update({@required U params}) async {
     try {
-      if (remoteMutationDataSource == null) {
-        throw CleanException(name: 'NO_REMOTE_DATA_SOURCE');
-      }
       final result = await remoteMutationDataSource.update(params: params);
-
-      if (result != null) {
-        await localQueryDataSource?.putAll(data: [result]);
-      }
-
       return Right(result);
     } on CleanException catch (e) {
       return Left(CleanFailure(name: e.name, data: e.data, group: e.group));
@@ -67,4 +45,26 @@ class FormRepository<T extends EquatableEntity, U extends FormParams<T>,
       return Left(const CleanFailure(name: 'UNEXPECTED_ERROR'));
     }
   }
+
+  // TODO: /// Removes form cache of T from localFormDataSource
+  // Future<Either<CleanFailure, Unit>> clearFormCache() async {
+  //   //
+  // }
+
+  // TODO: /// Add [params] to localFormDataSource.
+  // Future<Either<CleanFailure, Unit>> cacheForm({@required U params}) async {
+  //   //
+  // }
+
+  // TODO: /// Replace value in localFormDataSource with [params]
+  // Future<Either<CleanFailure, Unit>> updateFormCache({
+  //   @required U params,
+  // }) async {
+  //   //
+  // }
+
+  /// TODO: Retrieve form cache of T from localFormDataSource if any.
+  // Future<Either<CleanFailure, U>> readFormCache() {
+  //   //
+  // }
 }

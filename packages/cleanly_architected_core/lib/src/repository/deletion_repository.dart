@@ -4,7 +4,7 @@ import 'package:cleanly_architected_core/src/entity/equatable_entity.dart';
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
 
-/// Manages deletion of data from both remote and local
+/// Manages deletion of data from both remote
 class DeletionRepository<T extends EquatableEntity,
     U extends DeletionParams<T>> {
   final RemoteDeletionDataSource<T, U> remoteDataSource;

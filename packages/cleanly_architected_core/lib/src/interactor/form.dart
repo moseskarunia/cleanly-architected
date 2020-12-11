@@ -8,9 +8,8 @@ import 'package:meta/meta.dart';
 /// Base create interactor.
 ///
 /// If you need to do some validation, just extend this.
-class Create<T extends EquatableEntity, U extends FormParams<T>,
-    V extends QueryParams<T>> {
-  final FormRepository<T, U, V> repo;
+class Create<T extends EquatableEntity, U extends FormParams<T>> {
+  final FormRepository<T, U> repo;
 
   const Create({@required this.repo});
   Future<Either<CleanFailure, T>> call({@required U params}) async =>
@@ -20,9 +19,8 @@ class Create<T extends EquatableEntity, U extends FormParams<T>,
 /// Base update interactor.
 ///
 /// If you need to do some validation, just extend this.
-class Update<T extends EquatableEntity, U extends FormParams<T>,
-    V extends QueryParams<T>> {
-  final FormRepository<T, U, V> repo;
+class Update<T extends EquatableEntity, U extends FormParams<T>> {
+  final FormRepository<T, U> repo;
 
   const Update({@required this.repo});
 

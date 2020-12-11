@@ -132,6 +132,22 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
     }
   }
 
+  // /// Removes data with key equals to [id] from localQueryDataSource and
+  // /// remoteQueryDataSource.
+  // ///
+  // /// * [id] If null, will delete the entire table.
+  // Future<Either<CleanFailure, Unit>> delete({String id}) async {
+  //   //
+  // }
+
+  // /// Replaces data with key equals to [data.id] with [data.toJson()] in the
+  // /// localQueryDataSource
+  // Future<Either<CleanFailure, Unit>> addOrUpdateLocalData({
+  //   @required T data,
+  // }) async {
+  //   //
+  // }
+
   /// Attempt to query locally with given [params]. The query result
   /// will always replace [cachedData] since [localQueryDataSource] doesn't
   /// have pagination built in (on purpose)

@@ -18,9 +18,7 @@ class _TestEntity extends EquatableEntity {
 }
 
 class MockMutRepo extends Mock
-    implements
-        FormRepository<_TestEntity, NoFormParams<_TestEntity>,
-            NoQueryParams<_TestEntity>> {}
+    implements FormRepository<_TestEntity, NoFormParams<_TestEntity>> {}
 
 void main() {
   final mParamsFixture = NoFormParams<_TestEntity>();
@@ -32,8 +30,8 @@ void main() {
 
   group('create', () {
     test('should call repo.create', () async {
-      Create<_TestEntity, NoFormParams<_TestEntity>, NoQueryParams<_TestEntity>>
-          create = Create(repo: mockRepo);
+      Create<_TestEntity, NoFormParams<_TestEntity>> create =
+          Create(repo: mockRepo);
       await create(params: mParamsFixture);
       verify(mockRepo.create(params: mParamsFixture));
     });
@@ -41,8 +39,8 @@ void main() {
 
   group('update', () {
     test('should call repo.update', () async {
-      Update<_TestEntity, NoFormParams<_TestEntity>, NoQueryParams<_TestEntity>>
-          update = Update(repo: mockRepo);
+      Update<_TestEntity, NoFormParams<_TestEntity>> update =
+          Update(repo: mockRepo);
       await update(params: mParamsFixture);
       verify(mockRepo.update(params: mParamsFixture));
     });
