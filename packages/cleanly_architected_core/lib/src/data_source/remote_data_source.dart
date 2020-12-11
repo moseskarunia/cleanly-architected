@@ -12,9 +12,9 @@ abstract class RemoteQueryDataSource<T extends EquatableEntity,
 
   const RemoteQueryDataSource({this.client});
 
-  /// Read [pageSize] amount of data from [client] based on [queryParams] with
+  /// Read [pageSize] amount of data from [client] based on [params] with
   /// page equals to [pageNumber]
-  Future<List<T>> read({int pageSize, int pageNumber, U queryParams});
+  Future<List<T>> read({int pageSize, int pageNumber, U params});
 }
 
 /// The data source which responsible to mutate data from the remote client.
@@ -38,7 +38,7 @@ abstract class RemoteMutationDataSource<T extends EquatableEntity,
 
 /// The data source which responsible to delete data from the remote client.
 abstract class RemoteDeletionDataSource<T extends EquatableEntity,
-    V extends DeletionParams<T>> {
+    U extends DeletionParams<T>> {
   // Api client which interfaced with [CleanApiClient]. Feel free to use your
   /// own abstract and put it in this class's implementation
   final CleanApiClient client;
@@ -46,5 +46,5 @@ abstract class RemoteDeletionDataSource<T extends EquatableEntity,
   const RemoteDeletionDataSource({this.client});
 
   /// Delete a data with satisfies specified [params].
-  Future<void> delete({@required V params});
+  Future<void> delete({@required U params});
 }

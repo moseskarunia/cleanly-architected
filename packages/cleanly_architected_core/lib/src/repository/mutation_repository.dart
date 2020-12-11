@@ -14,11 +14,11 @@ import 'package:meta/meta.dart';
 /// to your service locator (such as [GetIt](https://pub.dev/packages/get_it))
 /// with different T.
 class MutationRepository<T extends EquatableEntity, U extends MutationParams<T>,
-    W extends QueryParams<T>> {
+    V extends QueryParams<T>> {
   final RemoteMutationDataSource<T, U> remoteMutationDataSource;
 
   /// To cache the result after creating.
-  final LocalQueryDataSource<T, W> localQueryDataSource;
+  final LocalQueryDataSource<T, V> localQueryDataSource;
 
   MutationRepository({
     this.remoteMutationDataSource,

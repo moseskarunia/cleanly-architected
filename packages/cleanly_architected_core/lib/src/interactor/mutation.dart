@@ -10,8 +10,8 @@ import 'package:meta/meta.dart';
 ///
 /// If you need to do some validation, just extend this.
 class Create<T extends EquatableEntity, U extends MutationParams<T>,
-    W extends QueryParams<T>> {
-  final MutationRepository<T, U, W> repo;
+    V extends QueryParams<T>> {
+  final MutationRepository<T, U, V> repo;
 
   const Create({@required this.repo});
   Future<Either<CleanFailure, T>> call({@required U params}) async =>
@@ -22,8 +22,8 @@ class Create<T extends EquatableEntity, U extends MutationParams<T>,
 ///
 /// If you need to do some validation, just extend this.
 class Update<T extends EquatableEntity, U extends MutationParams<T>,
-    W extends QueryParams<T>> {
-  final MutationRepository<T, U, W> repo;
+    V extends QueryParams<T>> {
+  final MutationRepository<T, U, V> repo;
 
   const Update({@required this.repo});
 

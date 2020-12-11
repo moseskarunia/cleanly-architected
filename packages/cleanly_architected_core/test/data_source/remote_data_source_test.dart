@@ -25,7 +25,7 @@ class _TestEntityRemoteQueryDataSource
   Future<List<_TestEntity>> read({
     int pageSize,
     int pageNumber,
-    NoQueryParams<_TestEntity> queryParams,
+    NoQueryParams<_TestEntity> params,
   }) {
     throw UnimplementedError();
   }
