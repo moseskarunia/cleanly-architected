@@ -5,18 +5,19 @@ import 'package:cleanly_architected_core/src/repository/form_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
 
-/// Base create interactor.
+/// Base create interactor / use case.
 ///
 /// If you need to do some validation, just extend this.
 class Create<T extends EquatableEntity, U extends FormParams<T>> {
   final FormRepository<T, U> repo;
 
   const Create({@required this.repo});
+
   Future<Either<CleanFailure, T>> call({@required U params}) async =>
       await repo.create(params: params);
 }
 
-/// Base update interactor.
+/// Base update interactor / use case.
 ///
 /// If you need to do some validation, just extend this.
 class Update<T extends EquatableEntity, U extends FormParams<T>> {

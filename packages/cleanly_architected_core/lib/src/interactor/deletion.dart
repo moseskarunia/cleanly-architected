@@ -5,7 +5,7 @@ import 'package:cleanly_architected_core/src/repository/deletion_repository.dart
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
 
-/// Base delete interactor.
+/// Base delete interactor / use case.
 ///
 /// If you need to do some validation, just extend this.
 class Delete<T extends EquatableEntity, U extends DeletionParams<T>> {
