@@ -58,25 +58,5 @@ class RemoteMutationRepository<T extends EquatableEntity,
     }
   }
 
-  // TODO: /// Removes form cache of T from LocalMutationDataSource
-  // Future<Either<CleanFailure, Unit>> clearFormCache() async {
-  //   //
-  // }
 
-  // TODO: /// Add [params] to LocalMutationDataSource.
-  // Future<Either<CleanFailure, Unit>> cacheForm({@required U params}) async {
-  //   //
-  // }
-
-  // TODO: /// Replace value in LocalMutationDataSource with [params]
-  // Future<Either<CleanFailure, Unit>> updateFormCache({
-  //   @required U params,
-  // }) async {
-  //   //
-  // }
-
-  /// TODO: Retrieve form cache of T from LocalMutationDataSource if any.
-  // Future<Either<CleanFailure, U>> readFormCache() {
-  //   //
-  // }
 }

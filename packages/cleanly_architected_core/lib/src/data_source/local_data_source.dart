@@ -16,8 +16,8 @@ abstract class LocalFormCacheDataSource<T extends EquatableEntity,
 
   const LocalFormCacheDataSource({@required this.storage, this.storageName});
 
-  /// Returns list of T which satisfies [params]
-  Future<List<T>> read({@required U params});
+  /// Read form cache
+  Future<U> read();
 
   /// Put all [data] to the [storage]. You need to convert it into a key value
   /// pair in the implementation, which matches [storage.putAll()].
@@ -29,10 +29,8 @@ abstract class LocalFormCacheDataSource<T extends EquatableEntity,
     await storage.putAll(storageName: storageName, data: data.toJson());
   }
 
-  /// Removes all the data under [st
-  /// orageName] if [key] is not provided,
-  /// and removes only the specified data under [key] if specified.
-  Future<void> delete({String key});
+  /// Clear form cache of [T]
+  Future<void> delete();
 }
 
 /// Manages local database which stored in [storage].

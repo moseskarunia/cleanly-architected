@@ -44,7 +44,7 @@ class _TestEntityLocalMutationDataSource
   }
 
   @override
-  Future<List<_TestEntity>> read({_MutationParams params}) {
+  Future<_MutationParams> read() {
     throw UnimplementedError();
   }
 }
@@ -60,7 +60,7 @@ class _TestEntityLocalFormCacheDataSource2
   }
 
   @override
-  Future<List<_TestEntity>> read({_MutationParams params}) {
+  Future<_MutationParams> read() {
     throw UnimplementedError();
   }
 }
@@ -76,7 +76,7 @@ class _TestEntityLocalFormCacheDataSource3
   }
 
   @override
-  Future<List<_TestEntity>> read({_MutationParams params}) {
+  Future<_MutationParams> read() {
     throw UnimplementedError();
   }
 }
