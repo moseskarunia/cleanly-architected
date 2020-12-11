@@ -14,7 +14,7 @@ abstract class LocalFormDataSource<T extends EquatableEntity,
   /// your own with storage from implementation.
   final CleanLocalStorage storage;
 
-  const LocalFormDataSource({this.storageName, this.storage});
+  const LocalFormDataSource({@required this.storage, this.storageName});
 
   /// Returns list of T which satisfies [params]
   Future<List<T>> read({@required U params});
@@ -36,14 +36,14 @@ abstract class LocalFormDataSource<T extends EquatableEntity,
 }
 
 /// Manages local database which stored in [storage].
-abstract class LocalQueryDataSource<T extends EquatableEntity,
+abstract class LocalDataSource<T extends EquatableEntity,
     U extends QueryParams<T>> {
   /// Collection / table name
   final String storageName;
 
   final CleanLocalStorage storage;
 
-  const LocalQueryDataSource({this.storageName, this.storage});
+  const LocalDataSource({@required this.storage, this.storageName});
 
   /// Returns list of T which satisfies [params]
   Future<List<T>> read({@required U params});
@@ -67,5 +67,7 @@ abstract class LocalQueryDataSource<T extends EquatableEntity,
 
   /// Removes all the data under [storageName] if [key] is not provided,
   /// and removes only the specified data under [key] if specified.
-  Future<void> delete({String key});
+  Future<void> delete({String key}) {
+    // TODO:
+  }
 }

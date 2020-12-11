@@ -28,3 +28,15 @@ class Update<T extends EquatableEntity, U extends FormParams<T>> {
   Future<Either<CleanFailure, T>> call({@required U params}) async =>
       await repo.update(params: params);
 }
+
+/// Base delete data interactor / use case.
+///
+/// If you need to do some validation, just extend this.
+class Delete<T extends EquatableEntity, U extends FormParams<T>> {
+  final FormRepository<T, U> repo;
+
+  const Delete({@required this.repo});
+
+  Future<Either<CleanFailure, Unit>> call({String id}) async =>
+      await repo.delete(id: id);
+}

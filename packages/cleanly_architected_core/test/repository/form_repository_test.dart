@@ -150,4 +150,46 @@ void main() {
       verify(mockRemoteDataSource.update(params: mutationParamsFixture));
     });
   });
+
+  group('delete', () {
+    group('should handle exception', () {
+      test('for UNEXPECTED_ERROR', () async {
+        when(mockRemoteDataSource.delete(id: anyNamed('id')))
+            .thenThrow(Exception());
+
+        final result = await repo.delete(id: '1');
+
+        expect(
+          (result as Left).value,
+          const CleanFailure(name: 'UNEXPECTED_ERROR'),
+        );
+      });
+      test('for CleanException', () async {
+        when(mockRemoteDataSource.delete(id: anyNamed('id'))).thenThrow(
+          const CleanException(
+            name: 'TEST_ERROR',
+            group: 'TEST',
+            data: <String, dynamic>{'id': 1},
+          ),
+        );
+
+        final result = await repo.delete(id: '1');
+
+        expect(
+          (result as Left).value,
+          const CleanFailure(
+            name: 'TEST_ERROR',
+            group: 'TEST',
+            data: <String, dynamic>{'id': 1},
+          ),
+        );
+      });
+    });
+
+    test('should call data source delete', () async {
+      await repo.delete(id: '1');
+
+      verify(mockRemoteDataSource.delete(id: '1'));
+    });
+  });
 }

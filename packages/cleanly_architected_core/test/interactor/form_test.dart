@@ -45,4 +45,13 @@ void main() {
       verify(mockRepo.update(params: mParamsFixture));
     });
   });
+
+  group('delete', () {
+    test('should call repo.delete', () async {
+      Delete<_TestEntity, NoFormParams<_TestEntity>> delete =
+          Delete(repo: mockRepo);
+      await delete(id: '123');
+      verify(mockRepo.delete(id: '123'));
+    });
+  });
 }

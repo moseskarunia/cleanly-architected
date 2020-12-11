@@ -46,6 +46,21 @@ class FormRepository<T extends EquatableEntity, U extends FormParams<T>> {
     }
   }
 
+  /// Request deletion to the remote data source.
+  /// Unit is just a dartz term for 'void'.
+  Future<Either<CleanFailure, Unit>> delete({String id}) async {
+    try {
+      await remoteMutationDataSource.delete(id: id);
+
+      /// unit is just dartz term for 'void'
+      return Right(unit);
+    } on CleanException catch (e) {
+      return Left(CleanFailure(name: e.name, data: e.data, group: e.group));
+    } catch (_) {
+      return Left(const CleanFailure(name: 'UNEXPECTED_ERROR'));
+    }
+  }
+
   // TODO: /// Removes form cache of T from localFormDataSource
   // Future<Either<CleanFailure, Unit>> clearFormCache() async {
   //   //

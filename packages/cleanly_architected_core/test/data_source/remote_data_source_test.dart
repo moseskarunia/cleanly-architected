@@ -44,15 +44,9 @@ class _TestEntityRemoteFormDataSource
   Future<_TestEntity> update({NoFormParams<_TestEntity> params}) {
     throw UnimplementedError();
   }
-}
-
-class _TestEntityRemoteDeletionDataSource extends RemoteDeletionDataSource<
-    _TestEntity, NoDeletionParams<_TestEntity>> {
-  _TestEntityRemoteDeletionDataSource({CleanApiClient client})
-      : super(client: client);
 
   @override
-  Future<void> delete({NoDeletionParams<_TestEntity> params}) {
+  Future<void> delete({String id}) {
     throw UnimplementedError();
   }
 }
@@ -88,10 +82,10 @@ void main() {
   });
 
   group('RemoteDeletionDataSource', () {
-    _TestEntityRemoteDeletionDataSource dataSource;
+    _TestEntityRemoteFormDataSource dataSource;
 
     setUp(() {
-      dataSource = _TestEntityRemoteDeletionDataSource(client: mockClient);
+      dataSource = _TestEntityRemoteFormDataSource(client: mockClient);
     });
 
     test('client should be assigned', () {

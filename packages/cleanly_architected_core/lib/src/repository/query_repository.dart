@@ -20,7 +20,7 @@ import 'package:meta/meta.dart';
 /// returns is list.take([pageNumber]*[pageSize])
 class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
   final RemoteQueryDataSource<T, U> remoteQueryDataSource;
-  final LocalQueryDataSource<T, U> localQueryDataSource;
+  final LocalDataSource<T, U> localQueryDataSource;
 
   /// In app cached data. This data will be returned when calling [readNext] if
   /// [lastParams] is equal to the last one.

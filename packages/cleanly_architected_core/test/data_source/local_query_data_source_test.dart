@@ -18,7 +18,7 @@ class _TestEntity extends EquatableEntity {
 }
 
 class _TestEntityLocalQueryDataSource
-    extends LocalQueryDataSource<_TestEntity, NoQueryParams<_TestEntity>> {
+    extends LocalDataSource<_TestEntity, NoQueryParams<_TestEntity>> {
   const _TestEntityLocalQueryDataSource({CleanLocalStorage storage})
       : super(storage: storage, storageName: 'test-storage');
 
@@ -34,7 +34,7 @@ class _TestEntityLocalQueryDataSource
 }
 
 class _TestEntityLocalQueryDataSource2
-    extends LocalQueryDataSource<_TestEntity, NoQueryParams<_TestEntity>> {
+    extends LocalDataSource<_TestEntity, NoQueryParams<_TestEntity>> {
   const _TestEntityLocalQueryDataSource2({CleanLocalStorage storage})
       : super(storage: storage);
 
@@ -50,7 +50,7 @@ class _TestEntityLocalQueryDataSource2
 }
 
 class _TestEntityLocalQueryDataSource3
-    extends LocalQueryDataSource<_TestEntity, NoQueryParams<_TestEntity>> {
+    extends LocalDataSource<_TestEntity, NoQueryParams<_TestEntity>> {
   const _TestEntityLocalQueryDataSource3({CleanLocalStorage storage})
       : super(storage: storage, storageName: '');
 

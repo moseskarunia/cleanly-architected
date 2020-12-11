@@ -35,17 +35,7 @@ abstract class RemoteFormDataSource<T extends EquatableEntity,
 
   /// Update data to [params] and return T as the result.
   Future<T> update({@required U params});
-}
 
-/// The data source which responsible to delete data from the remote client.
-abstract class RemoteDeletionDataSource<T extends EquatableEntity,
-    U extends DeletionParams<T>> {
-  // Api client which interfaced with [CleanApiClient]. Feel free to use your
-  /// own abstract and put it in this class's implementation
-  final CleanApiClient client;
-
-  const RemoteDeletionDataSource({this.client});
-
-  /// Delete a data with satisfies specified [params].
-  Future<void> delete({@required U params});
+  /// Update data in server with [id]
+  Future<void> delete({String id});
 }

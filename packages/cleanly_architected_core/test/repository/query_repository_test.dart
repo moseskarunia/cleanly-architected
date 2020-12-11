@@ -31,7 +31,7 @@ class _TestEntityQueryParams extends QueryParams<_TestEntity> {
 }
 
 class MockLocalDataSource extends Mock
-    implements LocalQueryDataSource<_TestEntity, _TestEntityQueryParams> {}
+    implements LocalDataSource<_TestEntity, _TestEntityQueryParams> {}
 
 class MockRemoteDataSource extends Mock
     implements RemoteQueryDataSource<_TestEntity, _TestEntityQueryParams> {}
