@@ -132,21 +132,33 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
     }
   }
 
-  // /// Removes data with key equals to [id] from localQueryDataSource and
-  // /// remoteQueryDataSource.
-  // ///
-  // /// * [id] If null, will delete the entire table.
-  // Future<Either<CleanFailure, Unit>> delete({String id}) async {
-  //   //
-  // }
+  /// Removes data with key equals to [id] from localQueryDataSource and
+  /// remoteQueryDataSource.
+  ///
+  /// * [id] If null, will delete the entire table.
+  Future<Either<CleanFailure, Unit>> deleteLocalData({String id}) async {
+    try {
+      //
+    } on CleanException catch (e) {
+      return Left(CleanFailure(name: e.name, data: e.data, group: e.group));
+    } catch (_) {
+      return Left(CleanFailure(name: 'UNEXPECTED_ERROR'));
+    }
+  }
 
-  // /// Replaces data with key equals to [data.id] with [data.toJson()] in the
-  // /// localQueryDataSource
-  // Future<Either<CleanFailure, Unit>> addOrUpdateLocalData({
-  //   @required T data,
-  // }) async {
-  //   //
-  // }
+  /// Put one or more data with key equals to [e.id] and value to [e.toJson()]
+  /// in the localQueryDataSource, where e is each data in the array.
+  Future<Either<CleanFailure, Unit>> putLocalData(
+      {@required List<T> data}) async {
+    try {
+      await localQueryDataSource.putAll(data: data);
+      return Right(unit);
+    } on CleanException catch (e) {
+      return Left(CleanFailure(name: e.name, data: e.data, group: e.group));
+    } catch (_) {
+      return Left(CleanFailure(name: 'UNEXPECTED_ERROR'));
+    }
+  }
 
   /// Attempt to query locally with given [params]. The query result
   /// will always replace [cachedData] since [localQueryDataSource] doesn't

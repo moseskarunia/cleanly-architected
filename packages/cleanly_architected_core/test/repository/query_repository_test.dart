@@ -571,4 +571,45 @@ void main() {
       });
     });
   });
+
+  group('putLocalData', () {
+    final fixture = [_TestEntity('1', 'Apple')];
+    group('should handle exception', () {
+      test('and return CleanFailure UNEXPECTED_ERROR', () async {
+        when(mockLocalDataSource.putAll(data: anyNamed('data')))
+            .thenThrow(Exception());
+
+        final result = await repo.putLocalData(data: fixture);
+
+        expect((result as Left).value,
+            const CleanFailure(name: 'UNEXPECTED_ERROR'));
+      });
+      test('and return CleanFailure with expected values', () async {
+        when(mockLocalDataSource.putAll(data: anyNamed('data'))).thenThrow(
+          const CleanException(
+            name: 'TEST_ERROR',
+            group: 'TEST',
+            data: <String, dynamic>{'id': 1},
+          ),
+        );
+
+        final result = await repo.putLocalData(data: fixture);
+
+        expect(
+          (result as Left).value,
+          const CleanFailure(
+            name: 'TEST_ERROR',
+            group: 'TEST',
+            data: <String, dynamic>{'id': 1},
+          ),
+        );
+      });
+    });
+
+    test('should call localDataSource.putAll', () async {
+      await repo.putLocalData(data: fixture);
+      verify(mockLocalDataSource.putAll(data: fixture));
+      verifyZeroInteractions(mockRemoteDataSource);
+    });
+  });
 }
