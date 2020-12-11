@@ -18,10 +18,10 @@ class ReadNext<T extends EquatableEntity, U extends QueryParams<T>> {
   Future<Either<CleanFailure, List<T>>> call({
     @required int pageNumber,
     @required int pageSize,
-    @required U queryParams,
+    @required U params,
   }) async =>
       await repo.readNext(
-          pageNumber: pageNumber, pageSize: pageSize, queryParams: queryParams);
+          pageNumber: pageNumber, pageSize: pageSize, params: params);
 }
 
 /// Base interactor to call RefreshAll.
@@ -36,7 +36,7 @@ class RefreshAll<T extends EquatableEntity, U extends QueryParams<T>> {
 
   Future<Either<CleanFailure, List<T>>> call({
     @required int pageSize,
-    @required U queryParams,
+    @required U params,
   }) async =>
-      await repo.refreshAll(pageSize: pageSize, queryParams: queryParams);
+      await repo.refreshAll(pageSize: pageSize, params: params);
 }

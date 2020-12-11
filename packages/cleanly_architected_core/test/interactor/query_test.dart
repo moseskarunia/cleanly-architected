@@ -42,13 +42,13 @@ void main() {
       await readNext(
         pageNumber: 1,
         pageSize: 10,
-        queryParams: _TestEntityQParams(),
+        params: _TestEntityQParams(),
       );
 
       verify(mockRepo.readNext(
         pageNumber: 1,
         pageSize: 10,
-        queryParams: _TestEntityQParams(),
+        params: _TestEntityQParams(),
       ));
     });
   });
@@ -61,12 +61,12 @@ void main() {
 
       await refreshAll(
         pageSize: 10,
-        queryParams: _TestEntityQParams(),
+        params: _TestEntityQParams(),
       );
 
       verify(mockRepo.refreshAll(
         pageSize: 10,
-        queryParams: _TestEntityQParams(),
+        params: _TestEntityQParams(),
       ));
     });
   });

@@ -1,6 +1,7 @@
 import 'package:cleanly_architected_core/src/entity/clean_error.dart';
 import 'package:cleanly_architected_core/src/data_source/params.dart';
 import 'package:cleanly_architected_core/src/entity/equatable_entity.dart';
+import 'package:cleanly_architected_core/src/repository/deletion_repository.dart';
 import 'package:cleanly_architected_core/src/repository/mutation_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
@@ -9,8 +10,8 @@ import 'package:meta/meta.dart';
 ///
 /// If you need to do some validation, just extend this.
 class Create<T extends EquatableEntity, U extends MutationParams<T>,
-    V extends DeletionParams<T>, W extends QueryParams<T>> {
-  final MutationRepository<T, U, V, W> repo;
+    V extends QueryParams<T>> {
+  final MutationRepository<T, U, V> repo;
 
   const Create({@required this.repo});
   Future<Either<CleanFailure, T>> call({@required U params}) async =>
@@ -21,8 +22,8 @@ class Create<T extends EquatableEntity, U extends MutationParams<T>,
 ///
 /// If you need to do some validation, just extend this.
 class Update<T extends EquatableEntity, U extends MutationParams<T>,
-    V extends DeletionParams<T>, W extends QueryParams<T>> {
-  final MutationRepository<T, U, V, W> repo;
+    V extends QueryParams<T>> {
+  final MutationRepository<T, U, V> repo;
 
   const Update({@required this.repo});
 
@@ -33,12 +34,11 @@ class Update<T extends EquatableEntity, U extends MutationParams<T>,
 /// Base delete interactor.
 ///
 /// If you need to do some validation, just extend this.
-class Delete<T extends EquatableEntity, U extends MutationParams<T>,
-    V extends DeletionParams<T>, W extends QueryParams<T>> {
-  final MutationRepository<T, U, V, W> repo;
+class Delete<T extends EquatableEntity, U extends DeletionParams<T>> {
+  final DeletionRepository<T, U> repo;
 
   const Delete({@required this.repo});
 
-  Future<Either<CleanFailure, Unit>> call({@required V params}) async =>
+  Future<Either<CleanFailure, Unit>> call({@required U params}) async =>
       await repo.delete(params: params);
 }

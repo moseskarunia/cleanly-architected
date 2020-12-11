@@ -43,34 +43,23 @@ class _TestEntityMutationParams extends MutationParams<_TestEntity> {
   }
 }
 
-class _TestEntityDeletionParams extends DeletionParams<_TestEntity> {
-  final String name;
-
-  _TestEntityDeletionParams(this.name, [String entityId])
-      : super(entityId: entityId);
-  @override
-  List<Object> get props => [name, entityId];
-}
-
 class MockLocalMutationDataSource extends Mock
     implements
         LocalMutationDataSource<_TestEntity, _TestEntityMutationParams> {}
 
 class MockRemoteMutationDataSource extends Mock
     implements
-        RemoteMutationDataSource<_TestEntity, _TestEntityMutationParams,
-            _TestEntityDeletionParams> {}
+        RemoteMutationDataSource<_TestEntity, _TestEntityMutationParams> {}
 
 class MockLocalQueryDataSource extends Mock
     implements LocalQueryDataSource<_TestEntity, _TestEntityQueryParams> {}
 
 void main() {
   final mutationParamsFixture = _TestEntityMutationParams('abc');
-  final deletionParamsFixture = _TestEntityDeletionParams('abc', '1');
   MockRemoteMutationDataSource mockRemoteDataSource;
   MockLocalQueryDataSource mockLocalQueryDataSource;
   MutationRepository<_TestEntity, _TestEntityMutationParams,
-      _TestEntityDeletionParams, _TestEntityQueryParams> repo;
+      _TestEntityQueryParams> repo;
 
   setUp(() {
     mockLocalQueryDataSource = MockLocalQueryDataSource();
@@ -222,96 +211,6 @@ void main() {
         await _performTest();
         verify(mockRemoteDataSource.update(params: mutationParamsFixture));
         verifyZeroInteractions(mockLocalQueryDataSource);
-      });
-    });
-  });
-
-  group('delete', () {
-    group('should handle exception', () {
-      test('for UNEXPECTED_ERROR', () async {
-        when(mockRemoteDataSource.delete(params: anyNamed('params')))
-            .thenThrow(Exception());
-
-        final result = await repo.delete(params: deletionParamsFixture);
-
-        expect(
-          (result as Left).value,
-          const CleanFailure(name: 'UNEXPECTED_ERROR'),
-        );
-      });
-      test('for CleanException', () async {
-        when(mockRemoteDataSource.delete(params: anyNamed('params'))).thenThrow(
-          const CleanException(
-            name: 'TEST_ERROR',
-            group: 'TEST',
-            data: <String, dynamic>{'id': 1},
-          ),
-        );
-
-        final result = await repo.delete(params: deletionParamsFixture);
-
-        expect(
-          (result as Left).value,
-          const CleanFailure(
-            name: 'TEST_ERROR',
-            group: 'TEST',
-            data: <String, dynamic>{'id': 1},
-          ),
-        );
-      });
-    });
-
-    test('return CleanFailure NO_DATA_SOURCE_AVAILABLE', () async {
-      repo = MutationRepository();
-
-      final result = await repo.delete(params: deletionParamsFixture);
-      expect(
-        (result as Left).value,
-        const CleanFailure(name: 'NO_DATA_SOURCE_AVAILABLE'),
-      );
-    });
-
-    test('should delete both remote and local', () async {
-      await repo.delete(params: deletionParamsFixture);
-
-      verifyInOrder([
-        mockRemoteDataSource.delete(params: deletionParamsFixture),
-        mockLocalQueryDataSource.delete(key: '1')
-      ]);
-    });
-
-    test('should not delete remote if remote data source null', () async {
-      repo = MutationRepository(localQueryDataSource: mockLocalQueryDataSource);
-
-      await repo.delete(params: deletionParamsFixture);
-      verify(mockLocalQueryDataSource.delete(key: '1'));
-      verifyZeroInteractions(mockRemoteDataSource);
-    });
-
-    group('should not delete local', () {
-      final deletionParamsWithNullEntityId =
-          _TestEntityDeletionParams('Orange');
-      final deletionParamsWithEmptyEntityId =
-          _TestEntityDeletionParams('Orange', '');
-      tearDown(() {
-        verifyZeroInteractions(mockLocalQueryDataSource);
-      });
-      test('if localDataSource is null', () async {
-        repo = MutationRepository(
-          remoteMutationDataSource: mockRemoteDataSource,
-        );
-        await repo.delete(params: deletionParamsFixture);
-        verify(mockRemoteDataSource.delete(params: deletionParamsFixture));
-      });
-      test('if params.entityId is null', () async {
-        await repo.delete(params: deletionParamsWithNullEntityId);
-        verify(mockRemoteDataSource.delete(
-            params: deletionParamsWithNullEntityId));
-      });
-      test('if params.entityId is empty', () async {
-        await repo.delete(params: deletionParamsWithEmptyEntityId);
-        verify(mockRemoteDataSource.delete(
-            params: deletionParamsWithEmptyEntityId));
       });
     });
   });

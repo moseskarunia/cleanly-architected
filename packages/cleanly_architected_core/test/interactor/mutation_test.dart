@@ -17,26 +17,22 @@ class _TestEntity extends EquatableEntity {
   }
 }
 
-class MockRepo extends Mock
+class MockMutRepo extends Mock
     implements
         MutationRepository<_TestEntity, NoMutationParams<_TestEntity>,
-            NoDeletionParams<_TestEntity>, NoQueryParams<_TestEntity>> {}
+            NoQueryParams<_TestEntity>> {}
 
 void main() {
   final mParamsFixture = NoMutationParams<_TestEntity>();
-  final dParamsFixture = NoDeletionParams<_TestEntity>();
-  MockRepo mockRepo;
+  MockMutRepo mockRepo;
 
   setUp(() {
-    mockRepo = MockRepo();
+    mockRepo = MockMutRepo();
   });
 
   group('create', () {
     test('should call repo.create', () async {
-      Create<
-          _TestEntity,
-          NoMutationParams<_TestEntity>,
-          NoDeletionParams<_TestEntity>,
+      Create<_TestEntity, NoMutationParams<_TestEntity>,
           NoQueryParams<_TestEntity>> create = Create(repo: mockRepo);
       await create(params: mParamsFixture);
       verify(mockRepo.create(params: mParamsFixture));
@@ -45,25 +41,10 @@ void main() {
 
   group('update', () {
     test('should call repo.update', () async {
-      Update<
-          _TestEntity,
-          NoMutationParams<_TestEntity>,
-          NoDeletionParams<_TestEntity>,
+      Update<_TestEntity, NoMutationParams<_TestEntity>,
           NoQueryParams<_TestEntity>> update = Update(repo: mockRepo);
       await update(params: mParamsFixture);
       verify(mockRepo.update(params: mParamsFixture));
-    });
-  });
-
-  group('delete', () {
-    test('should call repo.delete', () async {
-      Delete<
-          _TestEntity,
-          NoMutationParams<_TestEntity>,
-          NoDeletionParams<_TestEntity>,
-          NoQueryParams<_TestEntity>> delete = Delete(repo: mockRepo);
-      await delete(params: dParamsFixture);
-      verify(mockRepo.delete(params: dParamsFixture));
     });
   });
 }

@@ -14,11 +14,11 @@ import 'package:meta/meta.dart';
 /// to your service locator (such as [GetIt](https://pub.dev/packages/get_it))
 /// with different T.
 class MutationRepository<T extends EquatableEntity, U extends MutationParams<T>,
-    V extends DeletionParams<T>, W extends QueryParams<T>> {
-  final RemoteMutationDataSource<T, U, V> remoteMutationDataSource;
+    V extends QueryParams<T>> {
+  final RemoteMutationDataSource<T, U> remoteMutationDataSource;
 
   /// To cache the result after creating.
-  final LocalQueryDataSource<T, W> localQueryDataSource;
+  final LocalQueryDataSource<T, V> localQueryDataSource;
 
   MutationRepository({
     this.remoteMutationDataSource,
@@ -60,35 +60,6 @@ class MutationRepository<T extends EquatableEntity, U extends MutationParams<T>,
       }
 
       return Right(result);
-    } on CleanException catch (e) {
-      return Left(CleanFailure(name: e.name, data: e.data, group: e.group));
-    } catch (_) {
-      return Left(const CleanFailure(name: 'UNEXPECTED_ERROR'));
-    }
-  }
-
-  /// Request deletion to the remote and local data source. If [localOnly] is
-  /// true, will only delete from local repo, otherwise, both.
-  ///
-  /// Unit is just a dartz term for 'void'.
-  Future<Either<CleanFailure, Unit>> delete({@required V params}) async {
-    try {
-      if (remoteMutationDataSource == null && localQueryDataSource == null) {
-        throw CleanException(name: 'NO_DATA_SOURCE_AVAILABLE');
-      }
-
-      if (remoteMutationDataSource != null) {
-        await remoteMutationDataSource.delete(params: params);
-      }
-
-      if (localQueryDataSource != null &&
-          params.entityId != null &&
-          params.entityId.isNotEmpty) {
-        await localQueryDataSource.delete(key: params.entityId);
-      }
-
-      /// unit is just dartz term for 'void'
-      return Right(unit);
     } on CleanException catch (e) {
       return Left(CleanFailure(name: e.name, data: e.data, group: e.group));
     } catch (_) {

@@ -45,8 +45,8 @@ abstract class LocalQueryDataSource<T extends EquatableEntity,
 
   const LocalQueryDataSource({this.storageName, this.storage});
 
-  /// Returns list of T which satisfies [queryParams]
-  Future<List<T>> read({@required U queryParams});
+  /// Returns list of T which satisfies [params]
+  Future<List<T>> read({@required U params});
 
   /// Put all [data] to the [storage]. You need to convert it into a key value
   /// pair in the implementation, which matches [storage.putAll()]

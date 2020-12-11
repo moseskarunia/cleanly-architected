@@ -23,14 +23,14 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
   final LocalQueryDataSource<T, U> localQueryDataSource;
 
   /// In app cached data. This data will be returned when calling [readNext] if
-  /// [lastQueryParams] is equal to the last one.
+  /// [lastParams] is equal to the last one.
   @visibleForTesting
   List<T> cachedData = [];
 
   /// [cachedData] will be returned when calling [readNext] if
-  /// [lastQueryParams] is equal to the last one.
+  /// [lastParams] is equal to the last one.
   @visibleForTesting
-  U lastQueryParams;
+  U lastParams;
 
   /// End of list is true if on the last remote query result count is shorter
   /// than requested pageSize.
@@ -45,7 +45,7 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
     this.localQueryDataSource,
   });
 
-  /// If [lastQueryParams] is different than [queryParams], will always request
+  /// If [lastParams] is different than [params], will always request
   /// data from the server.
   ///
   /// Take [pageNumber]x[pageNumber] amount of data from the [cachedData].
@@ -63,11 +63,11 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
   Future<Either<CleanFailure, List<T>>> readNext({
     @required int pageSize,
     @required int pageNumber,
-    @required U queryParams,
+    @required U params,
   }) async {
     try {
       int calculatedPageNumber = pageNumber;
-      if (queryParams != lastQueryParams) {
+      if (params != lastParams) {
         calculatedPageNumber = 1;
       }
 
@@ -77,7 +77,7 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
         return Right(cachedData.take(pageNumber * pageSize).toList());
       }
 
-      await _queryLocally(queryParams: queryParams, pageSize: pageSize);
+      await _queryLocally(params: params, pageSize: pageSize);
 
       if (cachedData.length >= calculatedPageNumber * pageSize) {
         return Right(cachedData.take(calculatedPageNumber * pageSize).toList());
@@ -86,7 +86,7 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
       await _queryRemotely(
         pageNumber: calculatedPageNumber,
         pageSize: pageSize,
-        queryParams: queryParams,
+        params: params,
       );
 
       return Right(cachedData.take(calculatedPageNumber * pageSize).toList());
@@ -103,17 +103,17 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
   /// storage.
   Future<Either<CleanFailure, List<T>>> refreshAll({
     @required int pageSize,
-    @required U queryParams,
+    @required U params,
   }) async {
     try {
       if (remoteQueryDataSource == null && localQueryDataSource == null) {
         endOfList = true;
-        lastQueryParams = queryParams;
+        lastParams = params;
         return Right(cachedData.take(pageSize).toList());
       }
 
       if (remoteQueryDataSource == null) {
-        await _queryLocally(pageSize: pageSize, queryParams: queryParams);
+        await _queryLocally(pageSize: pageSize, params: params);
         endOfList = true;
         return Right(cachedData.take(pageSize).toList());
       }
@@ -121,7 +121,7 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
       await _queryRemotely(
         pageNumber: 1,
         pageSize: pageSize,
-        queryParams: queryParams,
+        params: params,
       );
 
       return Right(cachedData.take(pageSize).toList());
@@ -132,17 +132,17 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
     }
   }
 
-  /// Attempt to query locally with given [queryParams]. The query result
+  /// Attempt to query locally with given [params]. The query result
   /// will always replace [cachedData] since [localQueryDataSource] doesn't
   /// have pagination built in (on purpose)
-  Future<void> _queryLocally({U queryParams, int pageSize}) async {
+  Future<void> _queryLocally({U params, int pageSize}) async {
     if (localQueryDataSource == null) {
       return;
     }
     final localResults =
-        await localQueryDataSource.read(queryParams: queryParams);
+        await localQueryDataSource.read(params: params);
     cachedData = [...localResults];
-    lastQueryParams = queryParams;
+    lastParams = params;
     endOfList = localResults.length < pageSize;
   }
 
@@ -151,7 +151,7 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
   Future<void> _queryRemotely({
     @required int pageSize,
     @required int pageNumber,
-    @required U queryParams,
+    @required U params,
   }) async {
     if (remoteQueryDataSource == null) {
       endOfList = true;
@@ -161,7 +161,7 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
     final remoteResults = await remoteQueryDataSource.read(
       pageNumber: pageNumber,
       pageSize: pageSize,
-      queryParams: queryParams,
+      params: params,
     );
 
     cachedData = [...cachedData, ...remoteResults];
@@ -172,7 +172,7 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
       await localQueryDataSource.putAll(data: cachedData);
     }
 
-    lastQueryParams = queryParams;
+    lastParams = params;
     endOfList = remoteResults.length < pageNumber;
   }
 }
