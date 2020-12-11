@@ -17,17 +17,18 @@ abstract class RemoteQueryDataSource<T extends EquatableEntity,
   Future<List<T>> read({int pageSize, int pageNumber, U params});
 }
 
-/// The data source which responsible to mutate data from the remote client.
-/// Mutation is a term to change data. So it includes create and update.
+/// The data source which responsible to handle form related request to the
+/// server (create and update).
+///
 /// If you don't need a particular function, just throw a
 /// [CleanException] when calling that function.
-abstract class RemoteMutationDataSource<T extends EquatableEntity,
-    U extends MutationParams<T>> {
+abstract class RemoteFormDataSource<T extends EquatableEntity,
+    U extends FormParams<T>> {
   /// Api client which interfaced with [CleanApiClient]. Feel free to use your
   /// own abstract and put it in this class's implementation
   final CleanApiClient client;
 
-  const RemoteMutationDataSource({this.client});
+  const RemoteFormDataSource({this.client});
 
   /// Create data with [params] and return T as the result.
   Future<T> create({@required U params});

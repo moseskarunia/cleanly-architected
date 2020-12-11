@@ -3,7 +3,7 @@ import 'package:cleanly_architected_core/src/data_source/local_data_source.dart'
 import 'package:cleanly_architected_core/src/data_source/params.dart';
 import 'package:cleanly_architected_core/src/data_source/remote_data_source.dart';
 import 'package:cleanly_architected_core/src/entity/equatable_entity.dart';
-import 'package:cleanly_architected_core/src/repository/mutation_repository.dart';
+import 'package:cleanly_architected_core/src/repository/form_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -30,7 +30,7 @@ class _TestEntityQueryParams extends QueryParams<_TestEntity> {
   List<Object> get props => [name];
 }
 
-class _TestEntityMutationParams extends MutationParams<_TestEntity> {
+class _TestEntityMutationParams extends FormParams<_TestEntity> {
   final String name;
 
   _TestEntityMutationParams(this.name);
@@ -44,12 +44,10 @@ class _TestEntityMutationParams extends MutationParams<_TestEntity> {
 }
 
 class MockLocalMutationDataSource extends Mock
-    implements
-        LocalMutationDataSource<_TestEntity, _TestEntityMutationParams> {}
+    implements LocalFormDataSource<_TestEntity, _TestEntityMutationParams> {}
 
 class MockRemoteMutationDataSource extends Mock
-    implements
-        RemoteMutationDataSource<_TestEntity, _TestEntityMutationParams> {}
+    implements RemoteFormDataSource<_TestEntity, _TestEntityMutationParams> {}
 
 class MockLocalQueryDataSource extends Mock
     implements LocalQueryDataSource<_TestEntity, _TestEntityQueryParams> {}
@@ -58,13 +56,13 @@ void main() {
   final mutationParamsFixture = _TestEntityMutationParams('abc');
   MockRemoteMutationDataSource mockRemoteDataSource;
   MockLocalQueryDataSource mockLocalQueryDataSource;
-  MutationRepository<_TestEntity, _TestEntityMutationParams,
-      _TestEntityQueryParams> repo;
+  FormRepository<_TestEntity, _TestEntityMutationParams, _TestEntityQueryParams>
+      repo;
 
   setUp(() {
     mockLocalQueryDataSource = MockLocalQueryDataSource();
     mockRemoteDataSource = MockRemoteMutationDataSource();
-    repo = MutationRepository(
+    repo = FormRepository(
       remoteMutationDataSource: mockRemoteDataSource,
       localQueryDataSource: mockLocalQueryDataSource,
     );
@@ -111,7 +109,7 @@ void main() {
     });
 
     test('should return CleanFailure with NO_REMOTE_DATA_SOURCE', () async {
-      repo = MutationRepository(remoteMutationDataSource: null);
+      repo = FormRepository(remoteMutationDataSource: null);
       final result = await repo.create(params: mutationParamsFixture);
       expect(
         (result as Left).value,
@@ -135,7 +133,7 @@ void main() {
       });
 
       test('and not cache the result', () async {
-        repo = MutationRepository(
+        repo = FormRepository(
           remoteMutationDataSource: mockRemoteDataSource,
         );
         await _performTest();
@@ -181,7 +179,7 @@ void main() {
     });
 
     test('should return CleanFailure with NO_REMOTE_DATA_SOURCE', () async {
-      repo = MutationRepository(remoteMutationDataSource: null);
+      repo = FormRepository(remoteMutationDataSource: null);
       final result = await repo.update(params: mutationParamsFixture);
       expect(
         (result as Left).value,
@@ -205,7 +203,7 @@ void main() {
       });
 
       test('and not cache the result', () async {
-        repo = MutationRepository(
+        repo = FormRepository(
           remoteMutationDataSource: mockRemoteDataSource,
         );
         await _performTest();

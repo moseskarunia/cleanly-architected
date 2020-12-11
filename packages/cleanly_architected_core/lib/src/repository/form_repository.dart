@@ -6,21 +6,22 @@ import 'package:cleanly_architected_core/src/entity/equatable_entity.dart';
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
 
-/// The repository of mutation. This class manages form caching (coming soon), for example
-/// in a case when you need to store state of a form to be edited again later.
+/// The repository of form related functions and manages call to the remote
+/// form data source. Includes form caching to make it easier for user to
+/// continue editing later (coming soon).
 ///
 /// In a more specific case, you can always make a class, extends this,
 /// and override its properties. Otherwise, you just need to register it
 /// to your service locator (such as [GetIt](https://pub.dev/packages/get_it))
 /// with different T.
-class MutationRepository<T extends EquatableEntity, U extends MutationParams<T>,
+class FormRepository<T extends EquatableEntity, U extends FormParams<T>,
     V extends QueryParams<T>> {
-  final RemoteMutationDataSource<T, U> remoteMutationDataSource;
+  final RemoteFormDataSource<T, U> remoteMutationDataSource;
 
   /// To cache the result after creating.
   final LocalQueryDataSource<T, V> localQueryDataSource;
 
-  MutationRepository({
+  FormRepository({
     this.remoteMutationDataSource,
     this.localQueryDataSource,
   });

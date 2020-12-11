@@ -273,8 +273,7 @@ void main() {
           expect(repo.lastParams, _TestEntityQueryParams('abc'));
           expect(repo.endOfList, false);
         });
-        test('and with provided pageNumber, if params unchanged',
-            () async {
+        test('and with provided pageNumber, if params unchanged', () async {
           when(mockRemoteDataSource.read(
             pageNumber: anyNamed('pageNumber'),
             pageSize: anyNamed('pageSize'),

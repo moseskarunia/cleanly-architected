@@ -23,12 +23,12 @@ void main() {
     });
   });
 
-  group('NoMutationParams', () {
+  group('NoFormParams', () {
     test('props', () {
-      final q = NoMutationParams<_TestClass>();
+      final q = NoFormParams<_TestClass>();
       expect(q.props, []);
       expect(q.toJson(), null);
-      expect(q, isA<MutationParams<_TestClass>>());
+      expect(q, isA<FormParams<_TestClass>>());
     });
   });
 

@@ -5,8 +5,8 @@ import 'package:meta/meta.dart';
 
 /// Data source to which usually handles form caching so the user can return
 /// to edit later without losing progress.
-abstract class LocalMutationDataSource<T extends EquatableEntity,
-    U extends MutationParams<T>> {
+abstract class LocalFormDataSource<T extends EquatableEntity,
+    U extends FormParams<T>> {
   /// Name of the storage or collection of local db.
   final String storageName;
 
@@ -14,7 +14,7 @@ abstract class LocalMutationDataSource<T extends EquatableEntity,
   /// your own with storage from implementation.
   final CleanLocalStorage storage;
 
-  const LocalMutationDataSource({this.storageName, this.storage});
+  const LocalFormDataSource({this.storageName, this.storage});
 
   /// Returns list of T which satisfies [params]
   Future<List<T>> read({@required U params});
@@ -35,12 +35,12 @@ abstract class LocalMutationDataSource<T extends EquatableEntity,
   Future<void> delete({String key});
 }
 
-/// The data source which responsible to manage interaction between T and
-/// the local storage. This is usually used to store data obtained from the
-/// server.
+/// Manages local database which stored in [storage].
 abstract class LocalQueryDataSource<T extends EquatableEntity,
     U extends QueryParams<T>> {
+  /// Collection / table name
   final String storageName;
+
   final CleanLocalStorage storage;
 
   const LocalQueryDataSource({this.storageName, this.storage});

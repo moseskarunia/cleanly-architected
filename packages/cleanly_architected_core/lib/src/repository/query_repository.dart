@@ -139,8 +139,7 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
     if (localQueryDataSource == null) {
       return;
     }
-    final localResults =
-        await localQueryDataSource.read(params: params);
+    final localResults = await localQueryDataSource.read(params: params);
     cachedData = [...localResults];
     lastParams = params;
     endOfList = localResults.length < pageSize;
