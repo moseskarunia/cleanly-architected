@@ -5,9 +5,7 @@ import 'package:cleanly_architected_core/src/entity/equatable_entity.dart';
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
 
-/// The repository of form related functions and manages call to the remote
-/// form data source. Includes form caching to make it easier for user to
-/// continue editing later (coming soon).
+/// The repository of form related functions and manages call to the remote.
 ///
 /// In a more specific case, you can always make a class, extends this,
 /// and override its properties. Otherwise, you just need to register it
@@ -21,8 +19,7 @@ class RemoteMutationRepository<T extends EquatableEntity,
     @required this.remoteMutationDataSource,
   });
 
-  /// Request data creation to both remoteDataSource. If succeed, and result
-  /// not null, cache in local.
+  /// Request data creation to both remoteDataSource
   Future<Either<CleanFailure, T>> create({@required U params}) async {
     try {
       final result = await remoteMutationDataSource.create(params: params);
@@ -34,8 +31,7 @@ class RemoteMutationRepository<T extends EquatableEntity,
     }
   }
 
-  /// Request data update to both remoteDataSource. If succeed, and result
-  /// not null, cache in local.
+  /// Request data update to both remoteDataSource.
   Future<Either<CleanFailure, T>> update({@required U params}) async {
     try {
       final result = await remoteMutationDataSource.update(params: params);
