@@ -1,6 +1,6 @@
 # cleanly_architected_core
 
-![cleanly_architected_core](https://github.com/moseskarunia/cleanly-architected/workflows/cleanly_architected_core/badge.svg)
+![cleanly_architected_core](https://github.com/moseskarunia/cleanly-architected/workflows/cleanly_architected_core/badge.svg) [![codecov](https://codecov.io/gh/moseskarunia/cleanly-architected/branch/master/graph/badge.svg?token=3AT2NUV710)](https://codecov.io/gh/moseskarunia/cleanly-architected)
 
 The core library of [cleanly_architected](https://github.com/moseskarunia/cleanly-architected) for more flexible dependencies. This way, you can implement the platform and state manager of your choice.
 

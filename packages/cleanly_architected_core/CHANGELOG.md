@@ -1,5 +1,9 @@
+## [0.0.3] - 11 December 2020
+- Add coverage badge to README.
+- Format some document to pass pub.dev static analysis.
+
 ## [0.0.2] - 11 December 2020
-Added Changelog file
+Added Changelog file.
 
 ## [0.0.1] - 11 December 2020
 1. Query Repository: 
