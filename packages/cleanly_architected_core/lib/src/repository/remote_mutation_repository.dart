@@ -57,6 +57,4 @@ class RemoteMutationRepository<T extends EquatableEntity,
       return Left(const CleanFailure(name: 'UNEXPECTED_ERROR'));
     }
   }
-
-
 }

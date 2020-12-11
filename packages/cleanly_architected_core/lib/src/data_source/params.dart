@@ -41,12 +41,3 @@ class NoFormParams<T extends EquatableEntity> extends FormParams<T> {
   @override
   Map<String, dynamic> toJson() => null;
 }
-
-/// Deletion parameters of [RemoteMutationDataSource]'s [delete]
-abstract class DeletionParams<T extends EquatableEntity> extends Equatable {
-  /// Used to delete data in localQueryDataSource automatically after
-  /// calling delete in remote.
-  final String entityId;
-
-  const DeletionParams({this.entityId});
-}

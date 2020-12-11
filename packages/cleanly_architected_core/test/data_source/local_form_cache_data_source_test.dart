@@ -33,15 +33,10 @@ class _MutationParams extends FormParams<_TestEntity> {
       };
 }
 
-class _TestEntityLocalMutationDataSource
+class _TestEntityLocalFormCacheDataSource
     extends LocalFormCacheDataSource<_TestEntity, _MutationParams> {
-  const _TestEntityLocalMutationDataSource({CleanLocalStorage storage})
+  const _TestEntityLocalFormCacheDataSource({CleanLocalStorage storage})
       : super(storage: storage, storageName: 'test-form-storage');
-
-  @override
-  Future<void> delete({String key}) {
-    throw UnimplementedError();
-  }
 
   @override
   Future<_MutationParams> read() {
@@ -55,11 +50,6 @@ class _TestEntityLocalFormCacheDataSource2
       : super(storage: storage);
 
   @override
-  Future<void> delete({String key}) {
-    throw UnimplementedError();
-  }
-
-  @override
   Future<_MutationParams> read() {
     throw UnimplementedError();
   }
@@ -71,11 +61,6 @@ class _TestEntityLocalFormCacheDataSource3
       : super(storage: storage, storageName: '');
 
   @override
-  Future<void> delete({String key}) {
-    throw UnimplementedError();
-  }
-
-  @override
   Future<_MutationParams> read() {
     throw UnimplementedError();
   }
@@ -85,11 +70,11 @@ class MockStorage extends Mock implements CleanLocalStorage {}
 
 void main() {
   MockStorage mockStorage;
-  _TestEntityLocalMutationDataSource dataSource;
+  _TestEntityLocalFormCacheDataSource dataSource;
 
   setUp(() {
     mockStorage = MockStorage();
-    dataSource = _TestEntityLocalMutationDataSource(storage: mockStorage);
+    dataSource = _TestEntityLocalFormCacheDataSource(storage: mockStorage);
   });
 
   test('storage should be assigned', () {
@@ -115,7 +100,7 @@ void main() {
         verifyZeroInteractions(mockStorage);
       });
       test('storage null', () async {
-        dataSource = _TestEntityLocalMutationDataSource(storage: null);
+        dataSource = _TestEntityLocalFormCacheDataSource(storage: null);
         await dataSource.putAll(
           data: _MutationParams(name: 'Apple', isActive: true),
         );
@@ -131,6 +116,13 @@ void main() {
         storageName: 'test-form-storage',
         data: params.toJson(),
       ));
+    });
+  });
+
+  group('delete', () {
+    test('should call storage.delete', () async {
+      await dataSource.delete();
+      verify(mockStorage.delete(storageName: 'test-form-storage'));
     });
   });
 }

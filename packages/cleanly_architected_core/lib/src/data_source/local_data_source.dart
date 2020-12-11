@@ -30,7 +30,9 @@ abstract class LocalFormCacheDataSource<T extends EquatableEntity,
   }
 
   /// Clear form cache of [T]
-  Future<void> delete();
+  Future<void> delete() async {
+    await storage.delete(storageName: storageName);
+  }
 }
 
 /// Manages local database which stored in [storage].
@@ -63,7 +65,9 @@ abstract class LocalDataSource<T extends EquatableEntity,
     await storage.putAll(storageName: storageName, data: reducedData);
   }
 
-  /// Removes all the data under [storageName] if [key] is not provided,
-  /// and removes only the specified data under [key] if specified.
-  Future<void> delete({String key});
+  /// Removes all the data under [storageName] if [id] is not provided,
+  /// and removes only the specified data under [id] if specified.
+  Future<void> delete({String id}) async {
+    await storage.delete(storageName: storageName, key: id);
+  }
 }

@@ -575,7 +575,7 @@ void main() {
   group('deleteLocalData', () {
     group('should handle exception', () {
       test('and return CleanFailure UNEXPECTED_ERROR', () async {
-        when(mockLocalDataSource.delete(key: anyNamed('key')))
+        when(mockLocalDataSource.delete(id: anyNamed('id')))
             .thenThrow(Exception());
 
         final result = await repo.deleteLocalData(id: '1');
@@ -584,7 +584,7 @@ void main() {
             const CleanFailure(name: 'UNEXPECTED_ERROR'));
       });
       test('and return CleanFailure with expected values', () async {
-        when(mockLocalDataSource.delete(key: anyNamed('key'))).thenThrow(
+        when(mockLocalDataSource.delete(id: anyNamed('id'))).thenThrow(
           const CleanException(
             name: 'TEST_ERROR',
             group: 'TEST',
@@ -607,7 +607,7 @@ void main() {
 
     test('should call localDataSource.delete with id', () async {
       await repo.deleteLocalData(id: '1');
-      verify(mockLocalDataSource.delete(key: '1'));
+      verify(mockLocalDataSource.delete(id: '1'));
       verifyZeroInteractions(mockRemoteDataSource);
     });
 

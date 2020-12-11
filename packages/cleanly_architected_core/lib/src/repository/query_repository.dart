@@ -140,7 +140,7 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
   /// delete)
   Future<Either<CleanFailure, Unit>> deleteLocalData({String id}) async {
     try {
-      await localQueryDataSource.delete(key: id);
+      await localQueryDataSource.delete(id: id);
       return Right(unit);
     } on CleanException catch (e) {
       return Left(CleanFailure(name: e.name, data: e.data, group: e.group));
