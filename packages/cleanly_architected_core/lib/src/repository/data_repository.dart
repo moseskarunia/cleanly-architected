@@ -141,6 +141,9 @@ class DataRepository<T extends EquatableEntity, U extends QueryParams<T>> {
   Future<Either<CleanFailure, Unit>> deleteLocalData({String id}) async {
     try {
       await localDataSource.delete(id: id);
+
+      /// TODO: refresh cachedData with size equal to cachedData.length using
+      /// last query params. If last query params null, do nothing.
       return Right(unit);
     } on CleanException catch (e) {
       return Left(CleanFailure(name: e.name, data: e.data, group: e.group));
@@ -155,6 +158,9 @@ class DataRepository<T extends EquatableEntity, U extends QueryParams<T>> {
       {@required List<T> data}) async {
     try {
       await localDataSource.putAll(data: data);
+
+      /// TODO: refresh cachedData with size equal to cachedData.length using
+      /// last query params. If last query params null, do nothing.
       return Right(unit);
     } on CleanException catch (e) {
       return Left(CleanFailure(name: e.name, data: e.data, group: e.group));
