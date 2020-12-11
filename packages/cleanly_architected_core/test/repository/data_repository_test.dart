@@ -603,6 +603,56 @@ void main() {
           ),
         );
       });
+
+      test('should return NO_LOCAL_DATA_SOURCE', () async {
+        repo = DataRepository(remoteQueryDataSource: mockRemoteDataSource);
+        final result = await repo.deleteLocalData(id: '1');
+        expect(
+          (result as Left).value,
+          const CleanFailure(name: 'NO_LOCAL_DATA_SOURCE'),
+        );
+      });
+
+      group('should call localDataSource.delete', () {
+        test('and do nothing again if no lastParams', () async {
+          repo.cachedData = [
+            _TestEntity('1', 'Orange'),
+            _TestEntity('2', 'Strawberry'),
+            _TestEntity('3', 'Pineapple'),
+          ];
+          await repo.deleteLocalData(id: '1');
+          verify(mockLocalDataSource.delete(id: '1'));
+          verifyNoMoreInteractions(mockLocalDataSource);
+          verifyZeroInteractions(mockRemoteDataSource);
+        });
+        group('and then query local again', () {
+          test('with pageSize 1 if cachedData empty', () async {
+            when(mockLocalDataSource.read(params: anyNamed('params')))
+                .thenAnswer(
+              (_) async => [
+                _TestEntity('1', 'Orange'),
+                _TestEntity('2', 'Strawberry'),
+                _TestEntity('3', 'Pineapple'),
+              ],
+            );
+            repo.cachedData = [
+              _TestEntity('1', 'Orange'),
+            ];
+            repo.lastParams = _TestEntityQueryParams('abc');
+            await repo.deleteLocalData(id: '3');
+            verifyInOrder([
+              mockLocalDataSource.delete(id: '3'),
+              mockLocalDataSource.read(params: _TestEntityQueryParams('abc'))
+            ]);
+            expect(repo.cachedData, [
+              _TestEntity('1', 'Orange'),
+              _TestEntity('2', 'Strawberry'),
+              _TestEntity('3', 'Pineapple'),
+            ]);
+            verifyZeroInteractions(mockRemoteDataSource);
+          });
+        });
+      });
     });
 
     test('should call localDataSource.delete with id', () async {
@@ -651,10 +701,52 @@ void main() {
       });
     });
 
-    test('should call localDataSource.putAll', () async {
-      await repo.putLocalData(data: fixture);
-      verify(mockLocalDataSource.putAll(data: fixture));
-      verifyZeroInteractions(mockRemoteDataSource);
+    test('should return NO_LOCAL_DATA_SOURCE', () async {
+      repo = DataRepository(remoteQueryDataSource: mockRemoteDataSource);
+      final result = await repo.putLocalData(data: fixture);
+      expect(
+        (result as Left).value,
+        const CleanFailure(name: 'NO_LOCAL_DATA_SOURCE'),
+      );
+    });
+    group('should call localDataSource.putAll', () {
+      test('and do nothing again if no lastParams', () async {
+        repo.cachedData = [
+          _TestEntity('1', 'Orange'),
+          _TestEntity('2', 'Strawberry'),
+          _TestEntity('3', 'Pineapple'),
+        ];
+        await repo.putLocalData(data: fixture);
+        verify(mockLocalDataSource.putAll(data: fixture));
+        verifyNoMoreInteractions(mockLocalDataSource);
+        verifyZeroInteractions(mockRemoteDataSource);
+      });
+      group('and then query local again', () {
+        test('with pageSize 1 if cachedData empty', () async {
+          when(mockLocalDataSource.read(params: anyNamed('params'))).thenAnswer(
+            (_) async => [
+              _TestEntity('1', 'Orange'),
+              _TestEntity('2', 'Strawberry'),
+              _TestEntity('3', 'Pineapple'),
+            ],
+          );
+          repo.cachedData = [
+            _TestEntity('1', 'Orange'),
+          ];
+          repo.lastParams = _TestEntityQueryParams('abc');
+          await repo.putLocalData(data: fixture);
+          verifyInOrder([
+            mockLocalDataSource.putAll(data: fixture),
+            mockLocalDataSource.read(params: _TestEntityQueryParams('abc'))
+          ]);
+          expect(repo.cachedData, [
+            _TestEntity('1', 'Orange'),
+            _TestEntity('2', 'Strawberry'),
+            _TestEntity('3', 'Pineapple'),
+          ]);
+          verifyZeroInteractions(mockRemoteDataSource);
+        });
+      });
     });
   });
 }

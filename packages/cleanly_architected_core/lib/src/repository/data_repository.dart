@@ -140,10 +140,16 @@ class DataRepository<T extends EquatableEntity, U extends QueryParams<T>> {
   /// delete)
   Future<Either<CleanFailure, Unit>> deleteLocalData({String id}) async {
     try {
+      if (localDataSource == null) {
+        throw const CleanException(name: 'NO_LOCAL_DATA_SOURCE');
+      }
       await localDataSource.delete(id: id);
 
-      /// TODO: refresh cachedData with size equal to cachedData.length using
-      /// last query params. If last query params null, do nothing.
+      if (lastParams != null) {
+        final localResults = await localDataSource.read(params: lastParams);
+        cachedData = [...localResults];
+      }
+
       return Right(unit);
     } on CleanException catch (e) {
       return Left(CleanFailure(name: e.name, data: e.data, group: e.group));
@@ -157,10 +163,17 @@ class DataRepository<T extends EquatableEntity, U extends QueryParams<T>> {
   Future<Either<CleanFailure, Unit>> putLocalData(
       {@required List<T> data}) async {
     try {
+      if (localDataSource == null) {
+        throw const CleanException(name: 'NO_LOCAL_DATA_SOURCE');
+      }
+
       await localDataSource.putAll(data: data);
 
-      /// TODO: refresh cachedData with size equal to cachedData.length using
-      /// last query params. If last query params null, do nothing.
+      if (lastParams != null) {
+        final localResults = await localDataSource.read(params: lastParams);
+        cachedData = [...localResults];
+      }
+
       return Right(unit);
     } on CleanException catch (e) {
       return Left(CleanFailure(name: e.name, data: e.data, group: e.group));
