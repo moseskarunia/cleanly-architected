@@ -1,7 +1,7 @@
 import 'package:cleanly_architected_core/src/data_source/params.dart';
 import 'package:cleanly_architected_core/src/entity/equatable_entity.dart';
-import 'package:cleanly_architected_core/src/interactor/query.dart';
-import 'package:cleanly_architected_core/src/repository/query_repository.dart';
+import 'package:cleanly_architected_core/src/interactor/read_interactors.dart';
+import 'package:cleanly_architected_core/src/repository/data_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
@@ -24,7 +24,7 @@ class _TestEntityQParams extends QueryParams<_TestEntity> {
 }
 
 class MockRepo extends Mock
-    implements QueryRepository<_TestEntity, _TestEntityQParams> {}
+    implements DataRepository<_TestEntity, _TestEntityQParams> {}
 
 void main() {
   MockRepo mockRepo;

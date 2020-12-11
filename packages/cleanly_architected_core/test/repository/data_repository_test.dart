@@ -3,7 +3,7 @@ import 'package:cleanly_architected_core/src/data_source/local_data_source.dart'
 import 'package:cleanly_architected_core/src/data_source/params.dart';
 import 'package:cleanly_architected_core/src/data_source/remote_data_source.dart';
 import 'package:cleanly_architected_core/src/entity/equatable_entity.dart';
-import 'package:cleanly_architected_core/src/repository/query_repository.dart';
+import 'package:cleanly_architected_core/src/repository/data_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -41,13 +41,13 @@ class MockRemoteDataSource extends Mock
 void main() {
   MockLocalDataSource mockLocalDataSource;
   MockRemoteDataSource mockRemoteDataSource;
-  QueryRepository<_TestEntity, _TestEntityQueryParams> repo;
+  DataRepository<_TestEntity, _TestEntityQueryParams> repo;
 
   setUp(() {
     mockLocalDataSource = MockLocalDataSource();
     mockRemoteDataSource = MockRemoteDataSource();
-    repo = QueryRepository(
-      localQueryDataSource: mockLocalDataSource,
+    repo = DataRepository(
+      localDataSource: mockLocalDataSource,
       remoteQueryDataSource: mockRemoteDataSource,
     );
   });
@@ -208,7 +208,7 @@ void main() {
             _TestEntity('3', 'Pineapple'),
           ],
         );
-        repo = QueryRepository(remoteQueryDataSource: mockRemoteDataSource);
+        repo = DataRepository(remoteQueryDataSource: mockRemoteDataSource);
         final results = await _performTest();
 
         expect((results as Right).value, [
@@ -324,7 +324,7 @@ void main() {
           ]);
         });
         test('(but return cachedData anyway if remote is null)', () async {
-          repo = QueryRepository(localQueryDataSource: mockLocalDataSource);
+          repo = DataRepository(localDataSource: mockLocalDataSource);
           final results = await _performTest(queryParamString: 'def');
 
           expect((results as Right).value, [
@@ -372,7 +372,7 @@ void main() {
         verifyZeroInteractions(mockRemoteDataSource);
       });
       test('if both data source null', () async {
-        repo = QueryRepository();
+        repo = DataRepository();
         repo.cachedData = [
           _TestEntity('1', 'Orange'),
           _TestEntity('2', 'Strawberry'),
@@ -447,7 +447,7 @@ void main() {
     test(
       'will return cachedData and ignores params if no data source',
       () async {
-        repo = QueryRepository();
+        repo = DataRepository();
         repo.cachedData = [
           _TestEntity('1', 'Orange'),
           _TestEntity('2', 'Strawberry'),
@@ -470,7 +470,7 @@ void main() {
       },
     );
     test('will call localDataSource only if remoteDataSource null', () async {
-      repo = QueryRepository(localQueryDataSource: mockLocalDataSource);
+      repo = DataRepository(localDataSource: mockLocalDataSource);
 
       when(mockLocalDataSource.read(params: anyNamed('params'))).thenAnswer(
         (_) async => [
@@ -560,7 +560,7 @@ void main() {
       });
 
       test('but without local caching if localDataSource null', () async {
-        repo = QueryRepository(remoteQueryDataSource: mockRemoteDataSource);
+        repo = DataRepository(remoteQueryDataSource: mockRemoteDataSource);
         await _performTest();
         verify(mockRemoteDataSource.read(
           pageNumber: 1,
