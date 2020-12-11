@@ -31,12 +31,4 @@ void main() {
       expect(q, isA<FormParams<_TestClass>>());
     });
   });
-
-  group('NoDeletionParams', () {
-    test('props', () {
-      final q = NoDeletionParams<_TestClass>(entityId: '123');
-      expect(q.props, ['123']);
-      expect(q, isA<DeletionParams<_TestClass>>());
-    });
-  });
 }

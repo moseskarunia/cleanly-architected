@@ -50,10 +50,3 @@ abstract class DeletionParams<T extends EquatableEntity> extends Equatable {
 
   const DeletionParams({this.entityId});
 }
-
-/// Use this class if you don't need to add anything to the [DeletionParams]
-class NoDeletionParams<T extends EquatableEntity> extends DeletionParams<T> {
-  const NoDeletionParams({String entityId}) : super(entityId: entityId);
-  @override
-  List<Object> get props => [entityId];
-}
