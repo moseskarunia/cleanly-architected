@@ -22,13 +22,13 @@ abstract class RemoteQueryDataSource<T extends EquatableEntity,
 ///
 /// If you don't need a particular function, just throw a
 /// [CleanException] when calling that function.
-abstract class RemoteFormDataSource<T extends EquatableEntity,
+abstract class RemoteMutationDataSource<T extends EquatableEntity,
     U extends FormParams<T>> {
   /// Api client which interfaced with [CleanApiClient]. Feel free to use your
   /// own abstract and put it in this class's implementation
   final CleanApiClient client;
 
-  const RemoteFormDataSource({this.client});
+  const RemoteMutationDataSource({this.client});
 
   /// Create data with [params] and return T as the result.
   Future<T> create({@required U params});

@@ -14,7 +14,7 @@ import 'package:meta/meta.dart';
 /// to your service locator (such as [GetIt](https://pub.dev/packages/get_it))
 /// with different T.
 class FormRepository<T extends EquatableEntity, U extends FormParams<T>> {
-  final RemoteFormDataSource<T, U> remoteMutationDataSource;
+  final RemoteMutationDataSource<T, U> remoteMutationDataSource;
 
   FormRepository({
     @required this.remoteMutationDataSource,
@@ -61,24 +61,24 @@ class FormRepository<T extends EquatableEntity, U extends FormParams<T>> {
     }
   }
 
-  // TODO: /// Removes form cache of T from localFormDataSource
+  // TODO: /// Removes form cache of T from LocalMutationDataSource
   // Future<Either<CleanFailure, Unit>> clearFormCache() async {
   //   //
   // }
 
-  // TODO: /// Add [params] to localFormDataSource.
+  // TODO: /// Add [params] to LocalMutationDataSource.
   // Future<Either<CleanFailure, Unit>> cacheForm({@required U params}) async {
   //   //
   // }
 
-  // TODO: /// Replace value in localFormDataSource with [params]
+  // TODO: /// Replace value in LocalMutationDataSource with [params]
   // Future<Either<CleanFailure, Unit>> updateFormCache({
   //   @required U params,
   // }) async {
   //   //
   // }
 
-  /// TODO: Retrieve form cache of T from localFormDataSource if any.
+  /// TODO: Retrieve form cache of T from LocalMutationDataSource if any.
   // Future<Either<CleanFailure, U>> readFormCache() {
   //   //
   // }

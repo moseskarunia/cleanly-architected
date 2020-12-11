@@ -34,7 +34,7 @@ class _MutationParams extends FormParams<_TestEntity> {
 }
 
 class _TestEntityLocalMutationDataSource
-    extends LocalFormDataSource<_TestEntity, _MutationParams> {
+    extends LocalMutationDataSource<_TestEntity, _MutationParams> {
   const _TestEntityLocalMutationDataSource({CleanLocalStorage storage})
       : super(storage: storage, storageName: 'test-form-storage');
 
@@ -50,7 +50,7 @@ class _TestEntityLocalMutationDataSource
 }
 
 class _TestEntityLocalMutationDataSource2
-    extends LocalFormDataSource<_TestEntity, _MutationParams> {
+    extends LocalMutationDataSource<_TestEntity, _MutationParams> {
   const _TestEntityLocalMutationDataSource2({CleanLocalStorage storage})
       : super(storage: storage);
 
@@ -66,7 +66,7 @@ class _TestEntityLocalMutationDataSource2
 }
 
 class _TestEntityLocalMutationDataSource3
-    extends LocalFormDataSource<_TestEntity, _MutationParams> {
+    extends LocalMutationDataSource<_TestEntity, _MutationParams> {
   const _TestEntityLocalMutationDataSource3({CleanLocalStorage storage})
       : super(storage: storage, storageName: '');
 

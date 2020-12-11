@@ -31,9 +31,9 @@ class _TestEntityRemoteQueryDataSource
   }
 }
 
-class _TestEntityRemoteFormDataSource
-    extends RemoteFormDataSource<_TestEntity, NoFormParams<_TestEntity>> {
-  _TestEntityRemoteFormDataSource({CleanApiClient client})
+class _TestEntityRemoteMutationDataSource
+    extends RemoteMutationDataSource<_TestEntity, NoFormParams<_TestEntity>> {
+  _TestEntityRemoteMutationDataSource({CleanApiClient client})
       : super(client: client);
   @override
   Future<_TestEntity> create({NoFormParams<_TestEntity> params}) {
@@ -69,11 +69,11 @@ void main() {
       expect(dataSource.client, mockClient);
     });
   });
-  group('RemoteFormDataSource', () {
-    _TestEntityRemoteFormDataSource dataSource;
+  group('RemoteMutationDataSource', () {
+    _TestEntityRemoteMutationDataSource dataSource;
 
     setUp(() {
-      dataSource = _TestEntityRemoteFormDataSource(client: mockClient);
+      dataSource = _TestEntityRemoteMutationDataSource(client: mockClient);
     });
 
     test('client should be assigned', () {
@@ -82,10 +82,10 @@ void main() {
   });
 
   group('RemoteDeletionDataSource', () {
-    _TestEntityRemoteFormDataSource dataSource;
+    _TestEntityRemoteMutationDataSource dataSource;
 
     setUp(() {
-      dataSource = _TestEntityRemoteFormDataSource(client: mockClient);
+      dataSource = _TestEntityRemoteMutationDataSource(client: mockClient);
     });
 
     test('client should be assigned', () {

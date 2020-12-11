@@ -34,16 +34,16 @@ class _TestEntityFormParams extends FormParams<_TestEntity> {
   }
 }
 
-class MockRemoteFormDataSource extends Mock
-    implements RemoteFormDataSource<_TestEntity, _TestEntityFormParams> {}
+class MockRemoteMutationDataSource extends Mock
+    implements RemoteMutationDataSource<_TestEntity, _TestEntityFormParams> {}
 
 void main() {
   final mutationParamsFixture = _TestEntityFormParams('abc');
-  MockRemoteFormDataSource mockRemoteDataSource;
+  MockRemoteMutationDataSource mockRemoteDataSource;
   FormRepository<_TestEntity, _TestEntityFormParams> repo;
 
   setUp(() {
-    mockRemoteDataSource = MockRemoteFormDataSource();
+    mockRemoteDataSource = MockRemoteMutationDataSource();
     repo = FormRepository(
       remoteMutationDataSource: mockRemoteDataSource,
     );

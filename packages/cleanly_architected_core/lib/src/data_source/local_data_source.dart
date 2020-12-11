@@ -5,7 +5,7 @@ import 'package:meta/meta.dart';
 
 /// Data source to which usually handles form caching so the user can return
 /// to edit later without losing progress.
-abstract class LocalFormDataSource<T extends EquatableEntity,
+abstract class LocalMutationDataSource<T extends EquatableEntity,
     U extends FormParams<T>> {
   /// Name of the storage or collection of local db.
   final String storageName;
@@ -14,7 +14,7 @@ abstract class LocalFormDataSource<T extends EquatableEntity,
   /// your own with storage from implementation.
   final CleanLocalStorage storage;
 
-  const LocalFormDataSource({@required this.storage, this.storageName});
+  const LocalMutationDataSource({@required this.storage, this.storageName});
 
   /// Returns list of T which satisfies [params]
   Future<List<T>> read({@required U params});
@@ -67,7 +67,5 @@ abstract class LocalDataSource<T extends EquatableEntity,
 
   /// Removes all the data under [storageName] if [key] is not provided,
   /// and removes only the specified data under [key] if specified.
-  Future<void> delete({String key}) {
-    // TODO:
-  }
+  Future<void> delete({String key});
 }
