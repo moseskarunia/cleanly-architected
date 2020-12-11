@@ -1,7 +1,7 @@
 import 'package:cleanly_architected_core/src/data_source/params.dart';
 import 'package:cleanly_architected_core/src/entity/equatable_entity.dart';
 import 'package:cleanly_architected_core/src/interactor/form.dart';
-import 'package:cleanly_architected_core/src/repository/form_repository.dart';
+import 'package:cleanly_architected_core/src/repository/remote_mutation_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
@@ -17,15 +17,16 @@ class _TestEntity extends EquatableEntity {
   }
 }
 
-class MockMutRepo extends Mock
-    implements FormRepository<_TestEntity, NoFormParams<_TestEntity>> {}
+class MockRepo extends Mock
+    implements
+        RemoteMutationRepository<_TestEntity, NoFormParams<_TestEntity>> {}
 
 void main() {
   final mParamsFixture = NoFormParams<_TestEntity>();
-  MockMutRepo mockRepo;
+  MockRepo mockRepo;
 
   setUp(() {
-    mockRepo = MockMutRepo();
+    mockRepo = MockRepo();
   });
 
   group('create', () {

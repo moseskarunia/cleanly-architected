@@ -34,7 +34,7 @@ class _MutationParams extends FormParams<_TestEntity> {
 }
 
 class _TestEntityLocalMutationDataSource
-    extends LocalMutationDataSource<_TestEntity, _MutationParams> {
+    extends LocalFormCacheDataSource<_TestEntity, _MutationParams> {
   const _TestEntityLocalMutationDataSource({CleanLocalStorage storage})
       : super(storage: storage, storageName: 'test-form-storage');
 
@@ -49,9 +49,9 @@ class _TestEntityLocalMutationDataSource
   }
 }
 
-class _TestEntityLocalMutationDataSource2
-    extends LocalMutationDataSource<_TestEntity, _MutationParams> {
-  const _TestEntityLocalMutationDataSource2({CleanLocalStorage storage})
+class _TestEntityLocalFormCacheDataSource2
+    extends LocalFormCacheDataSource<_TestEntity, _MutationParams> {
+  const _TestEntityLocalFormCacheDataSource2({CleanLocalStorage storage})
       : super(storage: storage);
 
   @override
@@ -65,9 +65,9 @@ class _TestEntityLocalMutationDataSource2
   }
 }
 
-class _TestEntityLocalMutationDataSource3
-    extends LocalMutationDataSource<_TestEntity, _MutationParams> {
-  const _TestEntityLocalMutationDataSource3({CleanLocalStorage storage})
+class _TestEntityLocalFormCacheDataSource3
+    extends LocalFormCacheDataSource<_TestEntity, _MutationParams> {
+  const _TestEntityLocalFormCacheDataSource3({CleanLocalStorage storage})
       : super(storage: storage, storageName: '');
 
   @override
@@ -100,7 +100,7 @@ void main() {
     group('should not do anything if ', () {
       test('storageName null', () async {
         final dataSource2 =
-            _TestEntityLocalMutationDataSource2(storage: mockStorage);
+            _TestEntityLocalFormCacheDataSource2(storage: mockStorage);
         await dataSource2.putAll(
           data: _MutationParams(name: 'Apple', isActive: true),
         );
@@ -108,7 +108,7 @@ void main() {
       });
       test('storageName empty', () async {
         final dataSource3 =
-            _TestEntityLocalMutationDataSource3(storage: mockStorage);
+            _TestEntityLocalFormCacheDataSource3(storage: mockStorage);
         await dataSource3.putAll(
           data: _MutationParams(name: 'Apple', isActive: true),
         );

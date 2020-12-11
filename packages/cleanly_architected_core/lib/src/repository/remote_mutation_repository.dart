@@ -13,10 +13,11 @@ import 'package:meta/meta.dart';
 /// and override its properties. Otherwise, you just need to register it
 /// to your service locator (such as [GetIt](https://pub.dev/packages/get_it))
 /// with different T.
-class FormRepository<T extends EquatableEntity, U extends FormParams<T>> {
+class RemoteMutationRepository<T extends EquatableEntity,
+    U extends FormParams<T>> {
   final RemoteMutationDataSource<T, U> remoteMutationDataSource;
 
-  FormRepository({
+  RemoteMutationRepository({
     @required this.remoteMutationDataSource,
   });
 

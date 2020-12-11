@@ -19,7 +19,7 @@ class NoQueryParams<T extends EquatableEntity> extends QueryParams<T> {
 abstract class FormParams<T extends EquatableEntity> extends Equatable {
   const FormParams();
 
-  /// Will be used as values for in [LocalMutationDataSource]'s putAll.
+  /// Will be used as values for in [LocalFormCacheDataSource]'s putAll.
   /// The key should be field name, and the value is the value of cached form
   /// value.
   ///

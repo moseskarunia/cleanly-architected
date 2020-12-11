@@ -1,7 +1,7 @@
 import 'package:cleanly_architected_core/src/entity/clean_error.dart';
 import 'package:cleanly_architected_core/src/data_source/params.dart';
 import 'package:cleanly_architected_core/src/entity/equatable_entity.dart';
-import 'package:cleanly_architected_core/src/repository/form_repository.dart';
+import 'package:cleanly_architected_core/src/repository/remote_mutation_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
 
@@ -9,7 +9,7 @@ import 'package:meta/meta.dart';
 ///
 /// If you need to do some validation, just extend this.
 class Create<T extends EquatableEntity, U extends FormParams<T>> {
-  final FormRepository<T, U> repo;
+  final RemoteMutationRepository<T, U> repo;
 
   const Create({@required this.repo});
 
@@ -21,7 +21,7 @@ class Create<T extends EquatableEntity, U extends FormParams<T>> {
 ///
 /// If you need to do some validation, just extend this.
 class Update<T extends EquatableEntity, U extends FormParams<T>> {
-  final FormRepository<T, U> repo;
+  final RemoteMutationRepository<T, U> repo;
 
   const Update({@required this.repo});
 
@@ -33,7 +33,7 @@ class Update<T extends EquatableEntity, U extends FormParams<T>> {
 ///
 /// If you need to do some validation, just extend this.
 class Delete<T extends EquatableEntity, U extends FormParams<T>> {
-  final FormRepository<T, U> repo;
+  final RemoteMutationRepository<T, U> repo;
 
   const Delete({@required this.repo});
 
