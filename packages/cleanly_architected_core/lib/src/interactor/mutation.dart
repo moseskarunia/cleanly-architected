@@ -1,3 +1,4 @@
+import 'package:cleanly_architected_core/cleanly_architected_core.dart';
 import 'package:cleanly_architected_core/src/entity/clean_error.dart';
 import 'package:cleanly_architected_core/src/data_source/params.dart';
 import 'package:cleanly_architected_core/src/entity/equatable_entity.dart';
@@ -13,8 +14,12 @@ class Create<T extends EquatableEntity, U extends FormParams<T>> {
 
   const Create({@required this.repo});
 
-  Future<Either<CleanFailure, T>> call({@required U params}) async =>
-      await repo.create(params: params);
+  Future<Either<CleanFailure, T>> call({@required U params}) async {
+    final result = await repo.create(params: params);
+
+    /// TODO: Cache to local query
+    return result;
+  }
 }
 
 /// Base update interactor / use case.
@@ -25,8 +30,12 @@ class Update<T extends EquatableEntity, U extends FormParams<T>> {
 
   const Update({@required this.repo});
 
-  Future<Either<CleanFailure, T>> call({@required U params}) async =>
-      await repo.update(params: params);
+  Future<Either<CleanFailure, T>> call({@required U params}) async {
+    final result = await repo.update(params: params);
+
+    /// TODO: Cache to local query
+    return result;
+  }
 }
 
 /// Base delete data interactor / use case.
@@ -37,6 +46,10 @@ class Delete<T extends EquatableEntity, U extends FormParams<T>> {
 
   const Delete({@required this.repo});
 
-  Future<Either<CleanFailure, Unit>> call({String id}) async =>
-      await repo.delete(id: id);
+  Future<Either<CleanFailure, Unit>> call({String id}) async {
+    final result = await repo.delete(id: id);
+
+    /// TODO: Delete from local query
+    return result;
+  }
 }
