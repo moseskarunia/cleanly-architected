@@ -11,24 +11,17 @@ class FormCacheRepository<T extends EquatableEntity, U extends FormParams<T>> {
   const FormCacheRepository({@required this.localFormCacheDataSource});
 
   /// Removes form cache of T from LocalMutationDataSource
-  Future<Either<CleanFailure, Unit>> clearFormCache() async {
+  Future<Either<CleanFailure, Unit>> delete() async {
     //
   }
 
-  /// Add [params] to LocalMutationDataSource.
-  Future<Either<CleanFailure, Unit>> cacheForm({@required U params}) async {
+  /// Add form params to form cache T
+  Future<Either<CleanFailure, Unit>> put({@required U params}) async {
     //
   }
 
-  /// Replace value in LocalMutationDataSource with [params]
-  Future<Either<CleanFailure, Unit>> updateFormCache({
-    @required U params,
-  }) async {
-    //
-  }
-
-  ///  Retrieve form cache of T from LocalMutationDataSource if any.
-  Future<Either<CleanFailure, U>> readFormCache() async {
+  ///  Read form cache of T from LocalMutationDataSource if any.
+  Future<Either<CleanFailure, U>> read() async {
     //
   }
 }
