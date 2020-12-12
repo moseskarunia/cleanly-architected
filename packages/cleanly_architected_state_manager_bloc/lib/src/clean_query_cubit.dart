@@ -53,8 +53,31 @@ class CleanQueryCubit<T extends EquatableEntity, U extends QueryParams<T>>
     emit(newState);
   }
 
+  /// Call from page 1 and tells repository layer to immediately try to get
+  /// from remoteDataSource.
   Future<void> refreshAll({@required int pageSize, U params}) async {
-    //
+    if (state.isLoading) {
+      return;
+    }
+
+    emit(state.copyWith(isLoading: true));
+
+    final result = await _refreshAll(
+      params: params,
+      pageSize: pageSize,
+    );
+
+    final newState = result.fold(
+      (failure) => state.copyWith(failure: failure, isLoading: false),
+      (data) => state.copyWith(
+        data: data,
+        pageNumber: 1,
+        endOfList: pageSize > data.length,
+        isLoading: false,
+      ),
+    );
+
+    emit(newState);
   }
 }
 

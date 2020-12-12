@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:cleanly_architected_core/cleanly_architected_core.dart';
 import 'package:cleanly_architected_state_manager_bloc/src/clean_query_cubit.dart';
 import 'package:dartz/dartz.dart';
+import 'package:equatable/equatable.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
@@ -177,6 +178,116 @@ void main() {
   });
 
   group('refreshAll', () {
-    setUp(() {});
+    EquatableConfig.stringify = true;
+    blocTest<CleanQueryCubit<_TestEntity, MockQueryParams>,
+        CleanQueryState<_TestEntity>>(
+      'should do nothing when isLoading still true',
+      build: () {
+        return CleanQueryCubit<_TestEntity, MockQueryParams>(
+          readNext: mockReadNext,
+          refreshAll: mockRefreshAll,
+          initialState: CleanQueryState<_TestEntity>(isLoading: true),
+        );
+      },
+      act: (cubit) => cubit.refreshAll(
+        pageSize: 10,
+        params: queryParamsFixture,
+      ),
+      expect: [],
+      verify: (_) {
+        verifyZeroInteractions(mockRefreshAll);
+      },
+    );
+
+    blocTest<CleanQueryCubit<_TestEntity, MockQueryParams>,
+        CleanQueryState<_TestEntity>>(
+      'should emit Failure',
+      build: () {
+        when(mockRefreshAll(
+          params: anyNamed('params'),
+          pageSize: anyNamed('pageSize'),
+        )).thenAnswer(
+            (_) async => Left(const CleanFailure(name: 'TEST_ERROR')));
+
+        return _cubit;
+      },
+      act: (cubit) =>
+          cubit.refreshAll(pageSize: 10, params: queryParamsFixture),
+      expect: [
+        CleanQueryState<_TestEntity>(isLoading: true),
+        CleanQueryState<_TestEntity>(
+          failure: const CleanFailure(name: 'TEST_ERROR'),
+        )
+      ],
+      verify: (_) {
+        mockRefreshAll(params: queryParamsFixture, pageSize: 10);
+      },
+    );
+
+    blocTest<CleanQueryCubit<_TestEntity, MockQueryParams>,
+        CleanQueryState<_TestEntity>>(
+      'should emit data, retain old data when loading, and start from page 1',
+      build: () {
+        when(mockRefreshAll(
+          params: anyNamed('params'),
+          pageSize: anyNamed('pageSize'),
+        )).thenAnswer((_) async => Right(fixtures));
+
+        return CleanQueryCubit(
+          readNext: mockReadNext,
+          refreshAll: mockRefreshAll,
+          initialState: CleanQueryState<_TestEntity>(
+            pageNumber: 3,
+            data: fixtures,
+          ),
+        );
+      },
+      act: (cubit) => cubit.refreshAll(pageSize: 3, params: queryParamsFixture),
+      expect: [
+        CleanQueryState<_TestEntity>(
+          data: fixtures,
+          isLoading: true,
+          pageNumber: 3,
+        ),
+        CleanQueryState<_TestEntity>(
+          pageNumber: 1,
+          data: fixtures,
+          endOfList: true,
+        ),
+      ],
+      verify: (_) {
+        mockRefreshAll(params: queryParamsFixture, pageSize: 3);
+      },
+    );
+
+    blocTest<CleanQueryCubit<_TestEntity, MockQueryParams>,
+        CleanQueryState<_TestEntity>>(
+      'should emit old data if error',
+      build: () {
+        when(mockRefreshAll(
+          params: anyNamed('params'),
+          pageSize: anyNamed('pageSize'),
+        )).thenAnswer(
+            (_) async => Left(const CleanFailure(name: 'TEST_ERROR')));
+
+        return CleanQueryCubit(
+          readNext: mockReadNext,
+          refreshAll: mockRefreshAll,
+          initialState: CleanQueryState(data: fixtures),
+        );
+      },
+      act: (cubit) =>
+          cubit.refreshAll(pageSize: 10, params: queryParamsFixture),
+      expect: [
+        CleanQueryState<_TestEntity>(data: fixtures, isLoading: true),
+        CleanQueryState<_TestEntity>(
+          data: fixtures,
+          failure: const CleanFailure(name: 'TEST_ERROR'),
+        ),
+      ],
+      verify: (_) {
+        mockRefreshAll(params: queryParamsFixture, pageSize: 10);
+      },
+    );
   });
 }
