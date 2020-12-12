@@ -10,7 +10,8 @@ dependencies:
   equatable: ^1.2.5
   meta: ^1.2.4
   dartz: ^0.9.1
-  cleanly_architected_core: "^0.0.5"
+  cleanly_architected_core: ^0.0.5
+  bloc: ^6.1.1
 
 dev_dependencies:
   test: ^1.14.6
