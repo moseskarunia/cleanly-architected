@@ -94,7 +94,7 @@ void main() {
 
     blocTest<CleanQueryCubit<_TestEntity, MockQueryParams>,
         CleanQueryState<_TestEntity>>(
-      'should emit data',
+      'should emit data can clear previous failure',
       build: () {
         when(mockReadNext(
           params: anyNamed('params'),
@@ -102,11 +102,20 @@ void main() {
           pageSize: anyNamed('pageSize'),
         )).thenAnswer((_) async => Right(fixtures));
 
-        return _cubit;
+        return CleanQueryCubit(
+          readNext: mockReadNext,
+          refreshAll: mockRefreshAll,
+          initialState: CleanQueryState(
+            failure: const CleanFailure(name: 'TEST_ERROR'),
+          ),
+        );
       },
       act: (cubit) => cubit.readNext(pageSize: 3, params: queryParamsFixture),
       expect: [
-        CleanQueryState<_TestEntity>(isLoading: true),
+        CleanQueryState<_TestEntity>(
+          isLoading: true,
+          failure: const CleanFailure(name: 'TEST_ERROR'),
+        ),
         CleanQueryState<_TestEntity>(
           data: fixtures,
           endOfList: true,
@@ -226,7 +235,7 @@ void main() {
 
     blocTest<CleanQueryCubit<_TestEntity, MockQueryParams>,
         CleanQueryState<_TestEntity>>(
-      'should emit data, retain old data when loading, and start from page 1',
+      'should emit data, clear failure, and start from page 1',
       build: () {
         when(mockRefreshAll(
           params: anyNamed('params'),
@@ -239,6 +248,7 @@ void main() {
           initialState: CleanQueryState<_TestEntity>(
             pageNumber: 3,
             data: fixtures,
+            failure: const CleanFailure(name: 'TEST_ERROR'),
           ),
         );
       },
@@ -248,6 +258,7 @@ void main() {
           data: fixtures,
           isLoading: true,
           pageNumber: 3,
+          failure: const CleanFailure(name: 'TEST_ERROR'),
         ),
         CleanQueryState<_TestEntity>(
           pageNumber: 1,

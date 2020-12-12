@@ -43,11 +43,11 @@ class CleanQueryCubit<T extends EquatableEntity, U extends QueryParams<T>>
 
     final newState = result.fold(
       (failure) => state.copyWith(failure: failure, isLoading: false),
-      (data) => state.copyWith(
-        data: data,
-        endOfList: newPageNumber * pageSize > data.length,
-        isLoading: false,
-      ),
+      (data) => state.copyWithNull(failure: true).copyWith(
+            data: data,
+            endOfList: newPageNumber * pageSize > data.length,
+            isLoading: false,
+          ),
     );
 
     emit(newState);
@@ -69,12 +69,12 @@ class CleanQueryCubit<T extends EquatableEntity, U extends QueryParams<T>>
 
     final newState = result.fold(
       (failure) => state.copyWith(failure: failure, isLoading: false),
-      (data) => state.copyWith(
-        data: data,
-        pageNumber: 1,
-        endOfList: pageSize > data.length,
-        isLoading: false,
-      ),
+      (data) => state.copyWithNull(failure: true).copyWith(
+            data: data,
+            pageNumber: 1,
+            endOfList: pageSize > data.length,
+            isLoading: false,
+          ),
     );
 
     emit(newState);
