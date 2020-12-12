@@ -1,2 +1,2 @@
-export 'mutation.dart';
-export 'query.dart';
+export 'mutation_interactors.dart';
+export 'read_interactors.dart';

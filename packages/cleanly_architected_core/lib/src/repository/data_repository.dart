@@ -13,14 +13,14 @@ import 'package:meta/meta.dart';
 /// to your service locator (such as [GetIt](https://pub.dev/packages/get_it))
 /// with different T.
 ///
-/// This [QueryRepository] will also automatically handles simple
+/// This [DataRepository] will also automatically handles simple
 /// pagination based on pageSize and pageNumber.
 ///
 /// For now, it just support infinite list style pagination, because the data it
 /// returns is list.take([pageNumber]*[pageSize])
-class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
+class DataRepository<T extends EquatableEntity, U extends QueryParams<T>> {
   final RemoteQueryDataSource<T, U> remoteQueryDataSource;
-  final LocalQueryDataSource<T, U> localQueryDataSource;
+  final LocalDataSource<T, U> localDataSource;
 
   /// In app cached data. This data will be returned when calling [readNext] if
   /// [lastParams] is equal to the last one.
@@ -40,9 +40,9 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
   @visibleForTesting
   bool endOfList = false;
 
-  QueryRepository({
+  DataRepository({
     this.remoteQueryDataSource,
-    this.localQueryDataSource,
+    this.localDataSource,
   });
 
   /// If [lastParams] is different than [params], will always request
@@ -52,7 +52,7 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
   /// If [cachedData]'s length is lesser and not
   /// yet [endOfList], will read from [localDataSource] (if provided).
   ///
-  /// If the result from [localQueryDataSource] and [cachedData] satisfies the
+  /// If the result from [localDataSource] and [cachedData] satisfies the
   /// [pageNumber] and [pageSize], will immediately returns the data, otherwise,
   /// will call [remoteQueryDataSource] with [pageNumber] and [pageSize].
   ///
@@ -72,7 +72,7 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
       }
 
       if ((endOfList && calculatedPageNumber != 1) ||
-          (localQueryDataSource == null && remoteQueryDataSource == null)) {
+          (localDataSource == null && remoteQueryDataSource == null)) {
         endOfList = true;
         return Right(cachedData.take(pageNumber * pageSize).toList());
       }
@@ -106,7 +106,7 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
     @required U params,
   }) async {
     try {
-      if (remoteQueryDataSource == null && localQueryDataSource == null) {
+      if (remoteQueryDataSource == null && localDataSource == null) {
         endOfList = true;
         lastParams = params;
         return Right(cachedData.take(pageSize).toList());
@@ -132,15 +132,64 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
     }
   }
 
+  /// Removes data with key equals to [id] from localDataSource and
+  /// remoteQueryDataSource.
+  ///
+  /// * [id] is optional, so that you can use this to clear the entire
+  /// collection if null (implement this behavior in localDataSource's
+  /// delete)
+  Future<Either<CleanFailure, Unit>> deleteLocalData({String id}) async {
+    try {
+      if (localDataSource == null) {
+        throw const CleanException(name: 'NO_LOCAL_DATA_SOURCE');
+      }
+      await localDataSource.delete(id: id);
+
+      if (lastParams != null) {
+        final localResults = await localDataSource.read(params: lastParams);
+        cachedData = [...localResults];
+      }
+
+      return Right(unit);
+    } on CleanException catch (e) {
+      return Left(CleanFailure(name: e.name, data: e.data, group: e.group));
+    } catch (_) {
+      return Left(CleanFailure(name: 'UNEXPECTED_ERROR'));
+    }
+  }
+
+  /// Put one or more data with key equals to [e.id] and value to [e.toJson()]
+  /// in the localDataSource, where e is each data in the array.
+  Future<Either<CleanFailure, Unit>> putLocalData(
+      {@required List<T> data}) async {
+    try {
+      if (localDataSource == null) {
+        throw const CleanException(name: 'NO_LOCAL_DATA_SOURCE');
+      }
+
+      await localDataSource.putAll(data: data);
+
+      if (lastParams != null) {
+        final localResults = await localDataSource.read(params: lastParams);
+        cachedData = [...localResults];
+      }
+
+      return Right(unit);
+    } on CleanException catch (e) {
+      return Left(CleanFailure(name: e.name, data: e.data, group: e.group));
+    } catch (_) {
+      return Left(CleanFailure(name: 'UNEXPECTED_ERROR'));
+    }
+  }
+
   /// Attempt to query locally with given [params]. The query result
-  /// will always replace [cachedData] since [localQueryDataSource] doesn't
+  /// will always replace [cachedData] since [localDataSource] doesn't
   /// have pagination built in (on purpose)
   Future<void> _queryLocally({U params, int pageSize}) async {
-    if (localQueryDataSource == null) {
+    if (localDataSource == null) {
       return;
     }
-    final localResults =
-        await localQueryDataSource.read(params: params);
+    final localResults = await localDataSource.read(params: params);
     cachedData = [...localResults];
     lastParams = params;
     endOfList = localResults.length < pageSize;
@@ -168,8 +217,8 @@ class QueryRepository<T extends EquatableEntity, U extends QueryParams<T>> {
     final ids = cachedData.map((e) => e.id).toSet();
     cachedData.retainWhere((x) => ids.remove(x.id));
 
-    if (localQueryDataSource != null) {
-      await localQueryDataSource.putAll(data: cachedData);
+    if (localDataSource != null) {
+      await localDataSource.putAll(data: cachedData);
     }
 
     lastParams = params;

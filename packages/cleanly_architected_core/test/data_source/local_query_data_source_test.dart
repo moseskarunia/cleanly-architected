@@ -18,14 +18,9 @@ class _TestEntity extends EquatableEntity {
 }
 
 class _TestEntityLocalQueryDataSource
-    extends LocalQueryDataSource<_TestEntity, NoQueryParams<_TestEntity>> {
+    extends LocalDataSource<_TestEntity, NoQueryParams<_TestEntity>> {
   const _TestEntityLocalQueryDataSource({CleanLocalStorage storage})
       : super(storage: storage, storageName: 'test-storage');
-
-  @override
-  Future<void> delete({String key}) {
-    throw UnimplementedError();
-  }
 
   @override
   Future<List<_TestEntity>> read({NoQueryParams<_TestEntity> params}) {
@@ -34,14 +29,9 @@ class _TestEntityLocalQueryDataSource
 }
 
 class _TestEntityLocalQueryDataSource2
-    extends LocalQueryDataSource<_TestEntity, NoQueryParams<_TestEntity>> {
+    extends LocalDataSource<_TestEntity, NoQueryParams<_TestEntity>> {
   const _TestEntityLocalQueryDataSource2({CleanLocalStorage storage})
       : super(storage: storage);
-
-  @override
-  Future<void> delete({String key}) {
-    throw UnimplementedError();
-  }
 
   @override
   Future<List<_TestEntity>> read({NoQueryParams<_TestEntity> params}) {
@@ -50,14 +40,9 @@ class _TestEntityLocalQueryDataSource2
 }
 
 class _TestEntityLocalQueryDataSource3
-    extends LocalQueryDataSource<_TestEntity, NoQueryParams<_TestEntity>> {
+    extends LocalDataSource<_TestEntity, NoQueryParams<_TestEntity>> {
   const _TestEntityLocalQueryDataSource3({CleanLocalStorage storage})
       : super(storage: storage, storageName: '');
-
-  @override
-  Future<void> delete({String key}) {
-    throw UnimplementedError();
-  }
 
   @override
   Future<List<_TestEntity>> read({NoQueryParams<_TestEntity> params}) {
@@ -134,6 +119,13 @@ void main() {
         '4': {'id': '4', 'name': 'Pineapple'},
         '5': {'id': '5', 'name': 'Banana'}
       }));
+    });
+  });
+
+  group('delete', () {
+    test('should call storage.delete', () async {
+      await dataSource.delete(id: '1');
+      verify(mockStorage.delete(storageName: 'test-storage', key: '1'));
     });
   });
 }

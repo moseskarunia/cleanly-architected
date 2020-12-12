@@ -3,7 +3,7 @@ import 'package:cleanly_architected_core/src/data_source/local_data_source.dart'
 import 'package:cleanly_architected_core/src/data_source/params.dart';
 import 'package:cleanly_architected_core/src/data_source/remote_data_source.dart';
 import 'package:cleanly_architected_core/src/entity/equatable_entity.dart';
-import 'package:cleanly_architected_core/src/repository/query_repository.dart';
+import 'package:cleanly_architected_core/src/repository/data_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -31,7 +31,7 @@ class _TestEntityQueryParams extends QueryParams<_TestEntity> {
 }
 
 class MockLocalDataSource extends Mock
-    implements LocalQueryDataSource<_TestEntity, _TestEntityQueryParams> {}
+    implements LocalDataSource<_TestEntity, _TestEntityQueryParams> {}
 
 class MockRemoteDataSource extends Mock
     implements RemoteQueryDataSource<_TestEntity, _TestEntityQueryParams> {}
@@ -41,13 +41,13 @@ class MockRemoteDataSource extends Mock
 void main() {
   MockLocalDataSource mockLocalDataSource;
   MockRemoteDataSource mockRemoteDataSource;
-  QueryRepository<_TestEntity, _TestEntityQueryParams> repo;
+  DataRepository<_TestEntity, _TestEntityQueryParams> repo;
 
   setUp(() {
     mockLocalDataSource = MockLocalDataSource();
     mockRemoteDataSource = MockRemoteDataSource();
-    repo = QueryRepository(
-      localQueryDataSource: mockLocalDataSource,
+    repo = DataRepository(
+      localDataSource: mockLocalDataSource,
       remoteQueryDataSource: mockRemoteDataSource,
     );
   });
@@ -208,7 +208,7 @@ void main() {
             _TestEntity('3', 'Pineapple'),
           ],
         );
-        repo = QueryRepository(remoteQueryDataSource: mockRemoteDataSource);
+        repo = DataRepository(remoteQueryDataSource: mockRemoteDataSource);
         final results = await _performTest();
 
         expect((results as Right).value, [
@@ -273,8 +273,7 @@ void main() {
           expect(repo.lastParams, _TestEntityQueryParams('abc'));
           expect(repo.endOfList, false);
         });
-        test('and with provided pageNumber, if params unchanged',
-            () async {
+        test('and with provided pageNumber, if params unchanged', () async {
           when(mockRemoteDataSource.read(
             pageNumber: anyNamed('pageNumber'),
             pageSize: anyNamed('pageSize'),
@@ -325,7 +324,7 @@ void main() {
           ]);
         });
         test('(but return cachedData anyway if remote is null)', () async {
-          repo = QueryRepository(localQueryDataSource: mockLocalDataSource);
+          repo = DataRepository(localDataSource: mockLocalDataSource);
           final results = await _performTest(queryParamString: 'def');
 
           expect((results as Right).value, [
@@ -373,7 +372,7 @@ void main() {
         verifyZeroInteractions(mockRemoteDataSource);
       });
       test('if both data source null', () async {
-        repo = QueryRepository();
+        repo = DataRepository();
         repo.cachedData = [
           _TestEntity('1', 'Orange'),
           _TestEntity('2', 'Strawberry'),
@@ -448,7 +447,7 @@ void main() {
     test(
       'will return cachedData and ignores params if no data source',
       () async {
-        repo = QueryRepository();
+        repo = DataRepository();
         repo.cachedData = [
           _TestEntity('1', 'Orange'),
           _TestEntity('2', 'Strawberry'),
@@ -471,7 +470,7 @@ void main() {
       },
     );
     test('will call localDataSource only if remoteDataSource null', () async {
-      repo = QueryRepository(localQueryDataSource: mockLocalDataSource);
+      repo = DataRepository(localDataSource: mockLocalDataSource);
 
       when(mockLocalDataSource.read(params: anyNamed('params'))).thenAnswer(
         (_) async => [
@@ -561,7 +560,7 @@ void main() {
       });
 
       test('but without local caching if localDataSource null', () async {
-        repo = QueryRepository(remoteQueryDataSource: mockRemoteDataSource);
+        repo = DataRepository(remoteQueryDataSource: mockRemoteDataSource);
         await _performTest();
         verify(mockRemoteDataSource.read(
           pageNumber: 1,
@@ -569,6 +568,184 @@ void main() {
           params: _TestEntityQueryParams('abc'),
         ));
         verifyZeroInteractions(mockLocalDataSource);
+      });
+    });
+  });
+
+  group('deleteLocalData', () {
+    group('should handle exception', () {
+      test('and return CleanFailure UNEXPECTED_ERROR', () async {
+        when(mockLocalDataSource.delete(id: anyNamed('id')))
+            .thenThrow(Exception());
+
+        final result = await repo.deleteLocalData(id: '1');
+
+        expect((result as Left).value,
+            const CleanFailure(name: 'UNEXPECTED_ERROR'));
+      });
+      test('and return CleanFailure with expected values', () async {
+        when(mockLocalDataSource.delete(id: anyNamed('id'))).thenThrow(
+          const CleanException(
+            name: 'TEST_ERROR',
+            group: 'TEST',
+            data: <String, dynamic>{'id': 1},
+          ),
+        );
+
+        final result = await repo.deleteLocalData(id: '1');
+
+        expect(
+          (result as Left).value,
+          const CleanFailure(
+            name: 'TEST_ERROR',
+            group: 'TEST',
+            data: <String, dynamic>{'id': 1},
+          ),
+        );
+      });
+
+      test('should return NO_LOCAL_DATA_SOURCE', () async {
+        repo = DataRepository(remoteQueryDataSource: mockRemoteDataSource);
+        final result = await repo.deleteLocalData(id: '1');
+        expect(
+          (result as Left).value,
+          const CleanFailure(name: 'NO_LOCAL_DATA_SOURCE'),
+        );
+      });
+
+      group('should call localDataSource.delete', () {
+        test('and do nothing again if no lastParams', () async {
+          repo.cachedData = [
+            _TestEntity('1', 'Orange'),
+            _TestEntity('2', 'Strawberry'),
+            _TestEntity('3', 'Pineapple'),
+          ];
+          await repo.deleteLocalData(id: '1');
+          verify(mockLocalDataSource.delete(id: '1'));
+          verifyNoMoreInteractions(mockLocalDataSource);
+          verifyZeroInteractions(mockRemoteDataSource);
+        });
+        group('and then query local again', () {
+          test('with pageSize 1 if cachedData empty', () async {
+            when(mockLocalDataSource.read(params: anyNamed('params')))
+                .thenAnswer(
+              (_) async => [
+                _TestEntity('1', 'Orange'),
+                _TestEntity('2', 'Strawberry'),
+                _TestEntity('3', 'Pineapple'),
+              ],
+            );
+            repo.cachedData = [
+              _TestEntity('1', 'Orange'),
+            ];
+            repo.lastParams = _TestEntityQueryParams('abc');
+            await repo.deleteLocalData(id: '3');
+            verifyInOrder([
+              mockLocalDataSource.delete(id: '3'),
+              mockLocalDataSource.read(params: _TestEntityQueryParams('abc'))
+            ]);
+            expect(repo.cachedData, [
+              _TestEntity('1', 'Orange'),
+              _TestEntity('2', 'Strawberry'),
+              _TestEntity('3', 'Pineapple'),
+            ]);
+            verifyZeroInteractions(mockRemoteDataSource);
+          });
+        });
+      });
+    });
+
+    test('should call localDataSource.delete with id', () async {
+      await repo.deleteLocalData(id: '1');
+      verify(mockLocalDataSource.delete(id: '1'));
+      verifyZeroInteractions(mockRemoteDataSource);
+    });
+
+    test('should call localDataSource.delete without id', () async {
+      await repo.deleteLocalData();
+      verify(mockLocalDataSource.delete());
+      verifyZeroInteractions(mockRemoteDataSource);
+    });
+  });
+  group('putLocalData', () {
+    final fixture = [_TestEntity('1', 'Apple')];
+    group('should handle exception', () {
+      test('and return CleanFailure UNEXPECTED_ERROR', () async {
+        when(mockLocalDataSource.putAll(data: anyNamed('data')))
+            .thenThrow(Exception());
+
+        final result = await repo.putLocalData(data: fixture);
+
+        expect((result as Left).value,
+            const CleanFailure(name: 'UNEXPECTED_ERROR'));
+      });
+      test('and return CleanFailure with expected values', () async {
+        when(mockLocalDataSource.putAll(data: anyNamed('data'))).thenThrow(
+          const CleanException(
+            name: 'TEST_ERROR',
+            group: 'TEST',
+            data: <String, dynamic>{'id': 1},
+          ),
+        );
+
+        final result = await repo.putLocalData(data: fixture);
+
+        expect(
+          (result as Left).value,
+          const CleanFailure(
+            name: 'TEST_ERROR',
+            group: 'TEST',
+            data: <String, dynamic>{'id': 1},
+          ),
+        );
+      });
+    });
+
+    test('should return NO_LOCAL_DATA_SOURCE', () async {
+      repo = DataRepository(remoteQueryDataSource: mockRemoteDataSource);
+      final result = await repo.putLocalData(data: fixture);
+      expect(
+        (result as Left).value,
+        const CleanFailure(name: 'NO_LOCAL_DATA_SOURCE'),
+      );
+    });
+    group('should call localDataSource.putAll', () {
+      test('and do nothing again if no lastParams', () async {
+        repo.cachedData = [
+          _TestEntity('1', 'Orange'),
+          _TestEntity('2', 'Strawberry'),
+          _TestEntity('3', 'Pineapple'),
+        ];
+        await repo.putLocalData(data: fixture);
+        verify(mockLocalDataSource.putAll(data: fixture));
+        verifyNoMoreInteractions(mockLocalDataSource);
+        verifyZeroInteractions(mockRemoteDataSource);
+      });
+      group('and then query local again', () {
+        test('with pageSize 1 if cachedData empty', () async {
+          when(mockLocalDataSource.read(params: anyNamed('params'))).thenAnswer(
+            (_) async => [
+              _TestEntity('1', 'Orange'),
+              _TestEntity('2', 'Strawberry'),
+              _TestEntity('3', 'Pineapple'),
+            ],
+          );
+          repo.cachedData = [
+            _TestEntity('1', 'Orange'),
+          ];
+          repo.lastParams = _TestEntityQueryParams('abc');
+          await repo.putLocalData(data: fixture);
+          verifyInOrder([
+            mockLocalDataSource.putAll(data: fixture),
+            mockLocalDataSource.read(params: _TestEntityQueryParams('abc'))
+          ]);
+          expect(repo.cachedData, [
+            _TestEntity('1', 'Orange'),
+            _TestEntity('2', 'Strawberry'),
+            _TestEntity('3', 'Pineapple'),
+          ]);
+          verifyZeroInteractions(mockRemoteDataSource);
+        });
       });
     });
   });

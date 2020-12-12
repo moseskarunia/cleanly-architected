@@ -31,28 +31,22 @@ class _TestEntityRemoteQueryDataSource
   }
 }
 
-class _TestEntityRemoteMutationDataSource extends RemoteMutationDataSource<
-    _TestEntity, NoMutationParams<_TestEntity>> {
+class _TestEntityRemoteMutationDataSource
+    extends RemoteMutationDataSource<_TestEntity, NoFormParams<_TestEntity>> {
   _TestEntityRemoteMutationDataSource({CleanApiClient client})
       : super(client: client);
   @override
-  Future<_TestEntity> create({NoMutationParams<_TestEntity> params}) {
+  Future<_TestEntity> create({NoFormParams<_TestEntity> params}) {
     throw UnimplementedError();
   }
 
   @override
-  Future<_TestEntity> update({NoMutationParams<_TestEntity> params}) {
+  Future<_TestEntity> update({NoFormParams<_TestEntity> params}) {
     throw UnimplementedError();
   }
-}
-
-class _TestEntityRemoteDeletionDataSource extends RemoteDeletionDataSource<
-    _TestEntity, NoDeletionParams<_TestEntity>> {
-  _TestEntityRemoteDeletionDataSource({CleanApiClient client})
-      : super(client: client);
 
   @override
-  Future<void> delete({NoDeletionParams<_TestEntity> params}) {
+  Future<void> delete({String id}) {
     throw UnimplementedError();
   }
 }
@@ -88,10 +82,10 @@ void main() {
   });
 
   group('RemoteDeletionDataSource', () {
-    _TestEntityRemoteDeletionDataSource dataSource;
+    _TestEntityRemoteMutationDataSource dataSource;
 
     setUp(() {
-      dataSource = _TestEntityRemoteDeletionDataSource(client: mockClient);
+      dataSource = _TestEntityRemoteMutationDataSource(client: mockClient);
     });
 
     test('client should be assigned', () {

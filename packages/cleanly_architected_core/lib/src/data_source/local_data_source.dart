@@ -5,8 +5,8 @@ import 'package:meta/meta.dart';
 
 /// Data source to which usually handles form caching so the user can return
 /// to edit later without losing progress.
-abstract class LocalMutationDataSource<T extends EquatableEntity,
-    U extends MutationParams<T>> {
+abstract class LocalFormCacheDataSource<T extends EquatableEntity,
+    U extends FormParams<T>> {
   /// Name of the storage or collection of local db.
   final String storageName;
 
@@ -14,10 +14,10 @@ abstract class LocalMutationDataSource<T extends EquatableEntity,
   /// your own with storage from implementation.
   final CleanLocalStorage storage;
 
-  const LocalMutationDataSource({this.storageName, this.storage});
+  const LocalFormCacheDataSource({@required this.storage, this.storageName});
 
-  /// Returns list of T which satisfies [params]
-  Future<List<T>> read({@required U params});
+  /// Read form cache
+  Future<U> read();
 
   /// Put all [data] to the [storage]. You need to convert it into a key value
   /// pair in the implementation, which matches [storage.putAll()].
@@ -29,21 +29,21 @@ abstract class LocalMutationDataSource<T extends EquatableEntity,
     await storage.putAll(storageName: storageName, data: data.toJson());
   }
 
-  /// Removes all the data under [st
-  /// orageName] if [key] is not provided,
-  /// and removes only the specified data under [key] if specified.
-  Future<void> delete({String key});
+  /// Clear form cache of [T]
+  Future<void> delete() async {
+    await storage.delete(storageName: storageName);
+  }
 }
 
-/// The data source which responsible to manage interaction between T and
-/// the local storage. This is usually used to store data obtained from the
-/// server.
-abstract class LocalQueryDataSource<T extends EquatableEntity,
+/// Manages local database which stored in [storage].
+abstract class LocalDataSource<T extends EquatableEntity,
     U extends QueryParams<T>> {
+  /// Collection / table name
   final String storageName;
+
   final CleanLocalStorage storage;
 
-  const LocalQueryDataSource({this.storageName, this.storage});
+  const LocalDataSource({@required this.storage, this.storageName});
 
   /// Returns list of T which satisfies [params]
   Future<List<T>> read({@required U params});
@@ -65,7 +65,9 @@ abstract class LocalQueryDataSource<T extends EquatableEntity,
     await storage.putAll(storageName: storageName, data: reducedData);
   }
 
-  /// Removes all the data under [storageName] if [key] is not provided,
-  /// and removes only the specified data under [key] if specified.
-  Future<void> delete({String key});
+  /// Removes all the data under [storageName] if [id] is not provided,
+  /// and removes only the specified data under [id] if specified.
+  Future<void> delete({String id}) async {
+    await storage.delete(storageName: storageName, key: id);
+  }
 }

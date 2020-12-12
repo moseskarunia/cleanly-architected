@@ -17,7 +17,7 @@ class _TestEntity extends EquatableEntity {
   Map<String, dynamic> toJson() => <String, dynamic>{'id': id, 'name': name};
 }
 
-class _MutationParams extends MutationParams<_TestEntity> {
+class _MutationParams extends FormParams<_TestEntity> {
   final String name;
   final bool isActive;
 
@@ -33,50 +33,35 @@ class _MutationParams extends MutationParams<_TestEntity> {
       };
 }
 
-class _TestEntityLocalMutationDataSource
-    extends LocalMutationDataSource<_TestEntity, _MutationParams> {
-  const _TestEntityLocalMutationDataSource({CleanLocalStorage storage})
+class _TestEntityLocalFormCacheDataSource
+    extends LocalFormCacheDataSource<_TestEntity, _MutationParams> {
+  const _TestEntityLocalFormCacheDataSource({CleanLocalStorage storage})
       : super(storage: storage, storageName: 'test-form-storage');
 
   @override
-  Future<void> delete({String key}) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<List<_TestEntity>> read({_MutationParams params}) {
+  Future<_MutationParams> read() {
     throw UnimplementedError();
   }
 }
 
-class _TestEntityLocalMutationDataSource2
-    extends LocalMutationDataSource<_TestEntity, _MutationParams> {
-  const _TestEntityLocalMutationDataSource2({CleanLocalStorage storage})
+class _TestEntityLocalFormCacheDataSource2
+    extends LocalFormCacheDataSource<_TestEntity, _MutationParams> {
+  const _TestEntityLocalFormCacheDataSource2({CleanLocalStorage storage})
       : super(storage: storage);
 
   @override
-  Future<void> delete({String key}) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<List<_TestEntity>> read({_MutationParams params}) {
+  Future<_MutationParams> read() {
     throw UnimplementedError();
   }
 }
 
-class _TestEntityLocalMutationDataSource3
-    extends LocalMutationDataSource<_TestEntity, _MutationParams> {
-  const _TestEntityLocalMutationDataSource3({CleanLocalStorage storage})
+class _TestEntityLocalFormCacheDataSource3
+    extends LocalFormCacheDataSource<_TestEntity, _MutationParams> {
+  const _TestEntityLocalFormCacheDataSource3({CleanLocalStorage storage})
       : super(storage: storage, storageName: '');
 
   @override
-  Future<void> delete({String key}) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<List<_TestEntity>> read({_MutationParams params}) {
+  Future<_MutationParams> read() {
     throw UnimplementedError();
   }
 }
@@ -85,11 +70,11 @@ class MockStorage extends Mock implements CleanLocalStorage {}
 
 void main() {
   MockStorage mockStorage;
-  _TestEntityLocalMutationDataSource dataSource;
+  _TestEntityLocalFormCacheDataSource dataSource;
 
   setUp(() {
     mockStorage = MockStorage();
-    dataSource = _TestEntityLocalMutationDataSource(storage: mockStorage);
+    dataSource = _TestEntityLocalFormCacheDataSource(storage: mockStorage);
   });
 
   test('storage should be assigned', () {
@@ -100,7 +85,7 @@ void main() {
     group('should not do anything if ', () {
       test('storageName null', () async {
         final dataSource2 =
-            _TestEntityLocalMutationDataSource2(storage: mockStorage);
+            _TestEntityLocalFormCacheDataSource2(storage: mockStorage);
         await dataSource2.putAll(
           data: _MutationParams(name: 'Apple', isActive: true),
         );
@@ -108,14 +93,14 @@ void main() {
       });
       test('storageName empty', () async {
         final dataSource3 =
-            _TestEntityLocalMutationDataSource3(storage: mockStorage);
+            _TestEntityLocalFormCacheDataSource3(storage: mockStorage);
         await dataSource3.putAll(
           data: _MutationParams(name: 'Apple', isActive: true),
         );
         verifyZeroInteractions(mockStorage);
       });
       test('storage null', () async {
-        dataSource = _TestEntityLocalMutationDataSource(storage: null);
+        dataSource = _TestEntityLocalFormCacheDataSource(storage: null);
         await dataSource.putAll(
           data: _MutationParams(name: 'Apple', isActive: true),
         );
@@ -131,6 +116,13 @@ void main() {
         storageName: 'test-form-storage',
         data: params.toJson(),
       ));
+    });
+  });
+
+  group('delete', () {
+    test('should call storage.delete', () async {
+      await dataSource.delete();
+      verify(mockStorage.delete(storageName: 'test-form-storage'));
     });
   });
 }

@@ -16,10 +16,10 @@ class NoQueryParams<T extends EquatableEntity> extends QueryParams<T> {
 }
 
 /// Mutation parameters of [RemoteMutationDataSource]'s [create] and [update].
-abstract class MutationParams<T extends EquatableEntity> extends Equatable {
-  const MutationParams();
+abstract class FormParams<T extends EquatableEntity> extends Equatable {
+  const FormParams();
 
-  /// Will be used as values for in [LocalMutationDataSource]'s putAll.
+  /// Will be used as values for in [LocalFormCacheDataSource]'s putAll.
   /// The key should be field name, and the value is the value of cached form
   /// value.
   ///
@@ -33,27 +33,11 @@ abstract class MutationParams<T extends EquatableEntity> extends Equatable {
   Map<String, dynamic> toJson();
 }
 
-/// Use this class if you don't need to add anything to the [MutationParams]
-class NoMutationParams<T extends EquatableEntity> extends MutationParams<T> {
+/// Use this class if you don't need to add anything to the [FormParams]
+class NoFormParams<T extends EquatableEntity> extends FormParams<T> {
   @override
   List<Object> get props => [];
 
   @override
   Map<String, dynamic> toJson() => null;
-}
-
-/// Deletion parameters of [RemoteMutationDataSource]'s [delete]
-abstract class DeletionParams<T extends EquatableEntity> extends Equatable {
-  /// Used to delete data in localQueryDataSource automatically after
-  /// calling delete in remote.
-  final String entityId;
-
-  const DeletionParams({this.entityId});
-}
-
-/// Use this class if you don't need to add anything to the [DeletionParams]
-class NoDeletionParams<T extends EquatableEntity> extends DeletionParams<T> {
-  const NoDeletionParams({String entityId}) : super(entityId: entityId);
-  @override
-  List<Object> get props => [entityId];
 }

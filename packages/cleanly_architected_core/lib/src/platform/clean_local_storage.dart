@@ -1,6 +1,7 @@
 import 'package:meta/meta.dart';
 
-/// Platform interface to a key-value local storage.
+/// Interface of local storage (shared preferences, hive, etc) to make other
+/// layers not too dependant on 3rd party library.
 abstract class CleanLocalStorage {
   /// Returns queried data from local database.
   ///

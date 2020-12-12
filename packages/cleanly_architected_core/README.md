@@ -7,8 +7,7 @@ The core library of [cleanly_architected](https://github.com/moseskarunia/cleanl
 For more info about cleanly_architected, see: [cleanly_architected](https://github.com/moseskarunia/cleanly-architected)
 
 ## Planned Updates
-- Form caching in Mutation Repository: Make it easier for you to save form state, to enable user to continue editing later.
-- `SortParams` when querying
+- `SortParams` for query_data_source
 - Subscription data source, repo, and interactor
 
 Feel free to submit PR for them. The functions already available in the data source though, the repository just need to wire things up.
