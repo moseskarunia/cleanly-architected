@@ -9,15 +9,20 @@ import 'package:meta/meta.dart';
 /// Base create interactor / use case.
 ///
 /// If you need to do some validation, just extend this.
-class Create<T extends EquatableEntity, U extends FormParams<T>> {
-  final RemoteMutationRepository<T, U> repo;
+class Create<T extends EquatableEntity, U extends FormParams<T>,
+    V extends QueryParams<T>> {
+  final RemoteMutationRepository<T, U> mutationRepo;
+  final DataRepository<T, V> dataRepo;
 
-  const Create({@required this.repo});
+  const Create({@required this.mutationRepo, this.dataRepo});
 
   Future<Either<CleanFailure, T>> call({@required U params}) async {
-    final result = await repo.create(params: params);
+    final result = await mutationRepo.create(params: params);
 
-    /// TODO: Cache to local query
+    if (result?.isRight() == true && dataRepo != null) {
+      await dataRepo.putLocalData(data: [(result as Right).value]);
+    }
+
     return result;
   }
 }
@@ -25,15 +30,20 @@ class Create<T extends EquatableEntity, U extends FormParams<T>> {
 /// Base update interactor / use case.
 ///
 /// If you need to do some validation, just extend this.
-class Update<T extends EquatableEntity, U extends FormParams<T>> {
-  final RemoteMutationRepository<T, U> repo;
+class Update<T extends EquatableEntity, U extends FormParams<T>,
+    V extends QueryParams<T>> {
+  final RemoteMutationRepository<T, U> mutationRepo;
+  final DataRepository<T, V> dataRepo;
 
-  const Update({@required this.repo});
+  const Update({@required this.mutationRepo, this.dataRepo});
 
   Future<Either<CleanFailure, T>> call({@required U params}) async {
-    final result = await repo.update(params: params);
+    final result = await mutationRepo.update(params: params);
 
-    /// TODO: Cache to local query
+    if (result?.isRight() == true && dataRepo != null) {
+      await dataRepo.putLocalData(data: [(result as Right).value]);
+    }
+
     return result;
   }
 }
@@ -41,15 +51,20 @@ class Update<T extends EquatableEntity, U extends FormParams<T>> {
 /// Base delete data interactor / use case.
 ///
 /// If you need to do some validation, just extend this.
-class Delete<T extends EquatableEntity, U extends FormParams<T>> {
-  final RemoteMutationRepository<T, U> repo;
+class Delete<T extends EquatableEntity, U extends FormParams<T>,
+    V extends QueryParams<T>> {
+  final RemoteMutationRepository<T, U> mutationRepo;
+  final DataRepository<T, V> dataRepo;
 
-  const Delete({@required this.repo});
+  const Delete({@required this.mutationRepo, this.dataRepo});
 
   Future<Either<CleanFailure, Unit>> call({String id}) async {
-    final result = await repo.delete(id: id);
+    final result = await mutationRepo.delete(id: id);
 
-    /// TODO: Delete from local query
+    if (result?.isRight() == true && dataRepo != null) {
+      await dataRepo.deleteLocalData(id: id);
+    }
+
     return result;
   }
 }
