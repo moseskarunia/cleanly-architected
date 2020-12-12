@@ -20,6 +20,11 @@ class CleanQueryCubit<T extends EquatableEntity, U extends QueryParams<T>>
         super(initialState);
 
   Future<void> readNext({@required int pageSize, U params}) async {
+    if (state.isLoading) {
+      return;
+    }
+
+    emit(state.copyWith(isLoading: true));
     final newPageNumber = state.pageNumber + 1;
     final result = await _readNext(
       params: params,
@@ -27,7 +32,16 @@ class CleanQueryCubit<T extends EquatableEntity, U extends QueryParams<T>>
       pageNumber: newPageNumber,
     );
 
-    // final newState = result.fold((failure)=>)
+    final newState = result.fold(
+      (failure) => state.copyWith(failure: failure, isLoading: false),
+      (data) => state.copyWith(
+        data: data,
+        endOfList: newPageNumber * pageSize < data.length,
+        isLoading: false,
+      ),
+    );
+
+    emit(newState);
   }
 
   Future<void> refreshAll({@required int pageSize, U params}) async {
