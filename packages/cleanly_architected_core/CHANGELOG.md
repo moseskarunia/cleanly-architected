@@ -1,3 +1,7 @@
+## [0.0.5] - 12 December 2020
+- Removes flutter dependency
+- Untrack pubspec.lock
+
 ## [0.0.4] - 12 December 2020
 - Rework architecture.
 - Interactor / Use case or `Create`, `Update` and `Delete` will automatically reflects the change to `DataRepository` as well.
