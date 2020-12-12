@@ -75,3 +75,4 @@ build/
 
 .vscode/
 coverage/
+pubspec.lock

@@ -3,7 +3,7 @@ import 'package:cleanly_architected_core/src/data_source/params.dart';
 import 'package:cleanly_architected_core/src/entity/equatable_entity.dart';
 import 'package:cleanly_architected_core/src/interactor/mutation_interactors.dart';
 import 'package:dartz/dartz.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:test/test.dart';
 import 'package:mockito/mockito.dart';
 
 class _TestEntity extends EquatableEntity {
