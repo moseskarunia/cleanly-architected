@@ -5,15 +5,13 @@ repository: https://github.com/moseskarunia/cleanly-architected
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
-  flutter: ">=1.17.0"
 
 dependencies:
-  flutter:
-    sdk: flutter
-  cleanly_architected_core: "^0.0.1"
+  equatable: ^1.2.5
+  meta: ^1.2.4
+  dartz: ^0.9.1
+  cleanly_architected_core: "^0.0.5"
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
-
-flutter:
+  test: ^1.14.6
+  mockito: ^4.1.1
