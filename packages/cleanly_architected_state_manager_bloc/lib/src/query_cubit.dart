@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 
-part 'clean_query_cubit.g.dart';
+part 'query_cubit.g.dart';
 
 class CleanQueryCubit<T extends EquatableEntity, U extends QueryParams<T>>
     extends Cubit<CleanQueryState<T>> {
