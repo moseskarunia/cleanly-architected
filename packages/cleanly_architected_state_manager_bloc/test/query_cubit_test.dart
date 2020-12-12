@@ -48,6 +48,7 @@ void main() {
   test('CleanQueryState', () {
     final state = CleanQueryState<_TestEntity>();
     expect(state.props, [[], false, null, false, 0]);
+    expect(state.isError, false);
   });
 
   group('readNext', () {
