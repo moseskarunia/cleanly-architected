@@ -19,13 +19,22 @@ class CleanQueryCubit<T extends EquatableEntity, U extends QueryParams<T>>
         _refreshAll = refreshAll,
         super(initialState);
 
-  Future<void> readNext({@required int pageSize, U params}) async {
+  /// Read pageNumber+1 from the last state pageNumber. Doesn't emit anything
+  /// if isLoading true.
+  ///
+  /// * [pageSize] Page size requested.
+  /// * [params] Parameters
+  /// * [toPage] When null, the value will be last state's pageNumber +1, if
+  ///   not, will use this value
+  Future<void> readNext({@required int pageSize, U params, int toPage}) async {
     if (state.isLoading) {
       return;
     }
 
     emit(state.copyWith(isLoading: true));
-    final newPageNumber = state.pageNumber + 1;
+
+    final newPageNumber = toPage ?? state.pageNumber + 1;
+
     final result = await _readNext(
       params: params,
       pageSize: pageSize,
@@ -36,7 +45,7 @@ class CleanQueryCubit<T extends EquatableEntity, U extends QueryParams<T>>
       (failure) => state.copyWith(failure: failure, isLoading: false),
       (data) => state.copyWith(
         data: data,
-        endOfList: newPageNumber * pageSize < data.length,
+        endOfList: newPageNumber * pageSize > data.length,
         isLoading: false,
       ),
     );
@@ -45,10 +54,6 @@ class CleanQueryCubit<T extends EquatableEntity, U extends QueryParams<T>>
   }
 
   Future<void> refreshAll({@required int pageSize, U params}) async {
-    //
-  }
-
-  Future<void> refreshCurrentPage({@required int pageSize, U params}) async {
     //
   }
 }

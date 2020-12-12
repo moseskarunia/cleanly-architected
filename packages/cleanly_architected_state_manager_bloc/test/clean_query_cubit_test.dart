@@ -2,7 +2,6 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:cleanly_architected_core/cleanly_architected_core.dart';
 import 'package:cleanly_architected_state_manager_bloc/src/clean_query_cubit.dart';
 import 'package:dartz/dartz.dart';
-import 'package:equatable/equatable.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
@@ -28,7 +27,6 @@ class MockRefreshAll extends Mock
     implements RefreshAll<_TestEntity, MockQueryParams> {}
 
 void main() {
-  EquatableConfig.stringify = true;
   final fixtures = [
     _TestEntity('123'),
     _TestEntity('456'),
@@ -110,11 +108,40 @@ void main() {
         CleanQueryState<_TestEntity>(isLoading: true),
         CleanQueryState<_TestEntity>(
           data: fixtures,
-          endOfList: false,
+          endOfList: true,
         ),
       ],
       verify: (_) {
         mockReadNext(params: queryParamsFixture, pageSize: 3, pageNumber: 1);
+      },
+    );
+
+    blocTest<CleanQueryCubit<_TestEntity, MockQueryParams>,
+        CleanQueryState<_TestEntity>>(
+      'should emit data with toPage',
+      build: () {
+        when(mockReadNext(
+          params: anyNamed('params'),
+          pageNumber: anyNamed('pageNumber'),
+          pageSize: anyNamed('pageSize'),
+        )).thenAnswer((_) async => Right(fixtures));
+
+        return _cubit;
+      },
+      act: (cubit) => cubit.readNext(
+        pageSize: 3,
+        params: queryParamsFixture,
+        toPage: 2,
+      ),
+      expect: [
+        CleanQueryState<_TestEntity>(isLoading: true),
+        CleanQueryState<_TestEntity>(
+          data: fixtures,
+          endOfList: true,
+        ),
+      ],
+      verify: (_) {
+        mockReadNext(params: queryParamsFixture, pageSize: 3, pageNumber: 2);
       },
     );
 
