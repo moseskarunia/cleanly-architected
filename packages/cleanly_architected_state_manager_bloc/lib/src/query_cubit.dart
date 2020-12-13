@@ -6,15 +6,15 @@ import 'package:copy_with_extension/copy_with_extension.dart';
 
 part 'query_cubit.g.dart';
 
-class CleanQueryCubit<T extends EquatableEntity, U extends QueryParams<T>>
-    extends Cubit<CleanQueryState<T>> {
+class QueryCubit<T extends EquatableEntity, U extends QueryParams<T>>
+    extends Cubit<QueryState<T>> {
   final ReadNext<T, U> _readNext;
   final RefreshAll<T, U> _refreshAll;
 
-  CleanQueryCubit({
+  QueryCubit({
     @required ReadNext<T, U> readNext,
     @required RefreshAll<T, U> refreshAll,
-    CleanQueryState<T> initialState = const CleanQueryState(),
+    QueryState<T> initialState = const QueryState(),
   })  : _readNext = readNext,
         _refreshAll = refreshAll,
         super(initialState);
@@ -82,7 +82,7 @@ class CleanQueryCubit<T extends EquatableEntity, U extends QueryParams<T>>
 }
 
 @CopyWith(generateCopyWithNull: true)
-class CleanQueryState<T extends EquatableEntity> extends Equatable {
+class QueryState<T extends EquatableEntity> extends Equatable {
   /// True when the cubit is waiting for data. You should
   final bool isLoading;
 
@@ -103,7 +103,7 @@ class CleanQueryState<T extends EquatableEntity> extends Equatable {
   /// True when [isLoading] is false, and yet [failure] is not null
   bool get isError => failure != null && !isLoading;
 
-  const CleanQueryState({
+  const QueryState({
     this.data = const [],
     this.endOfList = false,
     this.failure,
