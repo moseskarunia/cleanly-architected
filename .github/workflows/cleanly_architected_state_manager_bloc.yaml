@@ -24,6 +24,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install dependencies
         run: pub get
+      - name: Activate Remove From Coverage
+        run: pub global activate remove_from_coverage
       - name: Generate files
         run: pub run build_runner build --delete-conflicting-outputs
       - name: Format
@@ -31,11 +33,11 @@ jobs:
       - name: Analyze
         run: dart analyze --fatal-infos --fatal-warnings .
       - name: Test
-        run: dart test --coverage=coverage
+        run: dart test --coverage=coverage && pub run coverage:format_coverage --lcov --in=coverage --out=coverage/lcov.info --packages=.packages --report-on=lib && pub global run remove_from_coverage:remove_from_coverage -f coverage/lcov.info -r '.g.dart$'
       - name: Check Code Coverage
         uses: ChicagoFlutter/lcov-cop@v1.0.0
         with:
-          path: coverage/lcov.info
+          path: packages/cleanly_architected_state_manager_bloc/coverage/lcov.info
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
