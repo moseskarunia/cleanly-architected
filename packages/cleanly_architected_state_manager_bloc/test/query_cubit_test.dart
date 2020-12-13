@@ -52,8 +52,7 @@ void main() {
   });
 
   group('readNext', () {
-    blocTest<QueryCubit<_TestEntity, MockQueryParams>,
-        QueryState<_TestEntity>>(
+    blocTest<QueryCubit<_TestEntity, MockQueryParams>, QueryState<_TestEntity>>(
       'should do nothing when isLoading still true',
       build: () {
         return QueryCubit<_TestEntity, MockQueryParams>(
@@ -68,8 +67,7 @@ void main() {
         verifyZeroInteractions(mockReadNext);
       },
     );
-    blocTest<QueryCubit<_TestEntity, MockQueryParams>,
-        QueryState<_TestEntity>>(
+    blocTest<QueryCubit<_TestEntity, MockQueryParams>, QueryState<_TestEntity>>(
       'should emit Failure',
       build: () {
         when(mockReadNext(
@@ -93,8 +91,7 @@ void main() {
       },
     );
 
-    blocTest<QueryCubit<_TestEntity, MockQueryParams>,
-        QueryState<_TestEntity>>(
+    blocTest<QueryCubit<_TestEntity, MockQueryParams>, QueryState<_TestEntity>>(
       'should emit data can clear previous failure',
       build: () {
         when(mockReadNext(
@@ -127,8 +124,7 @@ void main() {
       },
     );
 
-    blocTest<QueryCubit<_TestEntity, MockQueryParams>,
-        QueryState<_TestEntity>>(
+    blocTest<QueryCubit<_TestEntity, MockQueryParams>, QueryState<_TestEntity>>(
       'should emit data with toPage',
       build: () {
         when(mockReadNext(
@@ -156,8 +152,7 @@ void main() {
       },
     );
 
-    blocTest<QueryCubit<_TestEntity, MockQueryParams>,
-        QueryState<_TestEntity>>(
+    blocTest<QueryCubit<_TestEntity, MockQueryParams>, QueryState<_TestEntity>>(
       'should emit old data if error',
       build: () {
         when(mockReadNext(
@@ -189,8 +184,7 @@ void main() {
 
   group('refreshAll', () {
     EquatableConfig.stringify = true;
-    blocTest<QueryCubit<_TestEntity, MockQueryParams>,
-        QueryState<_TestEntity>>(
+    blocTest<QueryCubit<_TestEntity, MockQueryParams>, QueryState<_TestEntity>>(
       'should do nothing when isLoading still true',
       build: () {
         return QueryCubit<_TestEntity, MockQueryParams>(
@@ -209,8 +203,7 @@ void main() {
       },
     );
 
-    blocTest<QueryCubit<_TestEntity, MockQueryParams>,
-        QueryState<_TestEntity>>(
+    blocTest<QueryCubit<_TestEntity, MockQueryParams>, QueryState<_TestEntity>>(
       'should emit Failure',
       build: () {
         when(mockRefreshAll(
@@ -234,8 +227,7 @@ void main() {
       },
     );
 
-    blocTest<QueryCubit<_TestEntity, MockQueryParams>,
-        QueryState<_TestEntity>>(
+    blocTest<QueryCubit<_TestEntity, MockQueryParams>, QueryState<_TestEntity>>(
       'should emit data, clear failure, and start from page 1',
       build: () {
         when(mockRefreshAll(
@@ -272,8 +264,7 @@ void main() {
       },
     );
 
-    blocTest<QueryCubit<_TestEntity, MockQueryParams>,
-        QueryState<_TestEntity>>(
+    blocTest<QueryCubit<_TestEntity, MockQueryParams>, QueryState<_TestEntity>>(
       'should emit old data if error',
       build: () {
         when(mockRefreshAll(
