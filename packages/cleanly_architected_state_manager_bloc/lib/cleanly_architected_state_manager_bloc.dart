@@ -1,7 +1,5 @@
 library cleanly_architected_state_manager_bloc;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+export 'src/deletion_cubit.dart';
+export 'src/form_cubit.dart';
+export 'src/query_cubit.dart';

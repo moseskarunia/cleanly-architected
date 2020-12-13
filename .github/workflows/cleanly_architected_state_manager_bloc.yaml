@@ -1,21 +1,21 @@
-name: cleanly_architected_core
+name: cleanly_architected_state_manager_bloc
 
 on:
   push:
     branches: [master]
     paths:
-      - "packages/cleanly_architected_core/**"
-      - ".github/workflows/cleanly_architected_core.yaml"
+      - "packages/cleanly_architected_state_manager_bloc/**"
+      - ".github/workflows/cleanly_architected_state_manager_bloc.yaml"
   pull_request:
     paths:
-      - "packages/cleanly_architected_core/**"
-      - ".github/workflows/cleanly_architected_core.yaml"
+      - "packages/cleanly_architected_state_manager_bloc/**"
+      - ".github/workflows/cleanly_architected_state_manager_bloc.yaml"
 
 jobs:
   build:
     defaults:
       run:
-        working-directory: packages/cleanly_architected_core
+        working-directory: packages/cleanly_architected_state_manager_bloc
     runs-on: ubuntu-latest
     container:
       image: google/dart:2.10.0
@@ -24,6 +24,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install dependencies
         run: pub get
+      - name: Generate files
+        run: pub run build_runner build --delete-conflicting-outputs
       - name: Format
         run: dartfmt --dry-run --set-exit-if-changed .
       - name: Analyze
