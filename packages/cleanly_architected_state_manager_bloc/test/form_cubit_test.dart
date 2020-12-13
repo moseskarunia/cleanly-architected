@@ -102,16 +102,24 @@ void main() {
 
       blocTest<CreateFormCubit<_TestEntity, MockFormParams, MockQueryParams>,
           FormState<_TestEntity>>(
-        'should emit data for successful operation',
+        'should emit data for successful operation and clear previous failure',
         build: () {
           when(mockCreate(params: anyNamed('params')))
               .thenAnswer((_) async => Right(_TestEntity('987')));
 
-          return _cubit;
+          return CreateFormCubit(
+            create: mockCreate,
+            initialState: FormState(
+              failure: const CleanFailure(name: 'TEST_ERROR'),
+            ),
+          );
         },
         act: (cubit) => cubit.create(params: mockFormParams),
         expect: [
-          FormState<_TestEntity>(isLoading: true),
+          FormState<_TestEntity>(
+            isLoading: true,
+            failure: const CleanFailure(name: 'TEST_ERROR'),
+          ),
           FormState<_TestEntity>(data: _TestEntity('987')),
         ],
         verify: (cubit) {
@@ -176,16 +184,24 @@ void main() {
 
       blocTest<UpdateFormCubit<_TestEntity, MockFormParams, MockQueryParams>,
           FormState<_TestEntity>>(
-        'should emit data for successful operation',
+        'should emit data for successful operation and remove prev failure',
         build: () {
           when(mockUpdate(params: anyNamed('params')))
               .thenAnswer((_) async => Right(_TestEntity('987')));
 
-          return _cubit;
+          return UpdateFormCubit(
+            update: mockUpdate,
+            initialState: FormState(
+              failure: const CleanFailure(name: 'TEST_ERROR'),
+            ),
+          );
         },
         act: (cubit) => cubit.update(params: mockFormParams),
         expect: [
-          FormState<_TestEntity>(isLoading: true),
+          FormState<_TestEntity>(
+            isLoading: true,
+            failure: const CleanFailure(name: 'TEST_ERROR'),
+          ),
           FormState<_TestEntity>(data: _TestEntity('987')),
         ],
         verify: (cubit) {
