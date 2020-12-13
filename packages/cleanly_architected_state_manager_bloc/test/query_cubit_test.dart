@@ -2,7 +2,6 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:cleanly_architected_core/cleanly_architected_core.dart';
 import 'package:cleanly_architected_state_manager_bloc/src/query_cubit.dart';
 import 'package:dartz/dartz.dart';
-import 'package:equatable/equatable.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
