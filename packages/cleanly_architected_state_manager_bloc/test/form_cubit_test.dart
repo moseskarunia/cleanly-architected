@@ -31,13 +31,11 @@ class MockUpdate extends Mock
 
 void main() {
   MockFormParams mockFormParams;
-  MockQueryParams mockQueryParams;
   MockCreate mockCreate;
   MockUpdate mockUpdate;
 
   setUp(() {
     mockFormParams = MockFormParams();
-    mockQueryParams = MockQueryParams();
     mockCreate = MockCreate();
     mockUpdate = MockUpdate();
   });
@@ -125,5 +123,77 @@ void main() {
     });
   });
 
-  group('UpdateFormCubit', () {});
+  group('UpdateFormCubit', () {
+    UpdateFormCubit<_TestEntity, MockFormParams, MockQueryParams> _cubit;
+
+    setUp(() {
+      _cubit = UpdateFormCubit(update: mockUpdate);
+    });
+
+    group('update', () {
+      blocTest<UpdateFormCubit<_TestEntity, MockFormParams, MockQueryParams>,
+          FormState<_TestEntity>>(
+        'should not emit anything if isLoading',
+        build: () {
+          return UpdateFormCubit(
+            update: mockUpdate,
+            initialState: FormState(isLoading: true),
+          );
+        },
+        act: (cubit) => cubit.update(params: mockFormParams),
+        expect: [],
+        verify: (_) {
+          verifyZeroInteractions(mockCreate);
+        },
+      );
+
+      blocTest<UpdateFormCubit<_TestEntity, MockFormParams, MockQueryParams>,
+          FormState<_TestEntity>>(
+        'should emit failure but still retain old data',
+        build: () {
+          when(mockUpdate(params: anyNamed('params'))).thenAnswer(
+              (_) async => Left(const CleanFailure(name: 'TEST_ERROR')));
+
+          return UpdateFormCubit(
+            update: mockUpdate,
+            initialState: FormState(data: _TestEntity('987')),
+          );
+        },
+        act: (cubit) => cubit.update(params: mockFormParams),
+        expect: [
+          FormState<_TestEntity>(data: _TestEntity('987'), isLoading: true),
+          FormState<_TestEntity>(
+            data: _TestEntity('987'),
+            failure: const CleanFailure(name: 'TEST_ERROR'),
+          ),
+        ],
+        verify: (cubit) {
+          expect(cubit.state.isError, true);
+          expect(cubit.state.isSuccessful, false);
+          verify(mockUpdate(params: mockFormParams));
+        },
+      );
+
+      blocTest<UpdateFormCubit<_TestEntity, MockFormParams, MockQueryParams>,
+          FormState<_TestEntity>>(
+        'should emit data for successful operation',
+        build: () {
+          when(mockUpdate(params: anyNamed('params')))
+              .thenAnswer((_) async => Right(_TestEntity('987')));
+
+          return _cubit;
+        },
+        act: (cubit) => cubit.update(params: mockFormParams),
+        expect: [
+          FormState<_TestEntity>(isLoading: true),
+          FormState<_TestEntity>(data: _TestEntity('987')),
+        ],
+        verify: (cubit) {
+          expect(cubit.state.isError, false);
+          expect(cubit.state.isSuccessful, true);
+          verify(mockUpdate(params: mockFormParams));
+        },
+      );
+    });
+  });
 }
