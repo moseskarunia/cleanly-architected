@@ -2,7 +2,6 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:cleanly_architected_core/cleanly_architected_core.dart';
 import 'package:cleanly_architected_state_manager_bloc/src/deletion_cubit.dart';
 import 'package:dartz/dartz.dart';
-import 'package:equatable/equatable.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
@@ -56,7 +55,6 @@ void main() {
         verifyZeroInteractions(mockDelete);
       },
     );
-    EquatableConfig.stringify = true;
     blocTest<DeletionCubit<_TestEntity, MockFormParams, MockQueryParams>,
         DeletionState<_TestEntity>>(
       'should emit failure and set !isSuccessful',
@@ -77,7 +75,9 @@ void main() {
           failure: const CleanFailure(name: 'TEST_ERROR'),
         ),
       ],
-      verify: (_) {
+      verify: (cubit) {
+        expect(cubit.state.isSuccessful, false);
+        expect(cubit.state.isError, true);
         verify(mockDelete(id: '123'));
       },
     );
@@ -105,7 +105,9 @@ void main() {
         ),
         DeletionState<_TestEntity>(isSuccessful: true),
       ],
-      verify: (_) {
+      verify: (cubit) {
+        expect(cubit.state.isSuccessful, true);
+        expect(cubit.state.isError, false);
         verify(mockDelete(id: '123'));
       },
     );

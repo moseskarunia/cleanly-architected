@@ -20,3 +20,4 @@ dev_dependencies:
   bloc_test: ^7.1.0
   copy_with_extension_gen: ^1.4.0
   build_runner: ^1.10.9
+  coverage: ^0.14.1

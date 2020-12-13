@@ -183,7 +183,6 @@ void main() {
   });
 
   group('refreshAll', () {
-    EquatableConfig.stringify = true;
     blocTest<QueryCubit<_TestEntity, MockQueryParams>, QueryState<_TestEntity>>(
       'should do nothing when isLoading still true',
       build: () {
