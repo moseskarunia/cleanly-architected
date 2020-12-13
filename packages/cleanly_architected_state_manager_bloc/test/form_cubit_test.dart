@@ -50,12 +50,6 @@ void main() {
   });
 
   group('CreateFormCubit', () {
-    CreateFormCubit<_TestEntity, MockFormParams, MockQueryParams> _cubit;
-
-    setUp(() {
-      _cubit = CreateFormCubit(create: mockCreate);
-    });
-
     group('create', () {
       blocTest<CreateFormCubit<_TestEntity, MockFormParams, MockQueryParams>,
           FormState<_TestEntity>>(
@@ -132,12 +126,6 @@ void main() {
   });
 
   group('UpdateFormCubit', () {
-    UpdateFormCubit<_TestEntity, MockFormParams, MockQueryParams> _cubit;
-
-    setUp(() {
-      _cubit = UpdateFormCubit(update: mockUpdate);
-    });
-
     group('update', () {
       blocTest<UpdateFormCubit<_TestEntity, MockFormParams, MockQueryParams>,
           FormState<_TestEntity>>(

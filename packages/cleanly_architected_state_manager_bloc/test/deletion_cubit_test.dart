@@ -29,16 +29,9 @@ class MockDelete extends Mock
 
 void main() {
   MockDelete mockDelete;
-  MockFormParams mockFormParams;
-  MockQueryParams mockQueryParams;
-  DeletionCubit<_TestEntity, MockFormParams, MockQueryParams> _cubit;
 
   setUp(() {
     mockDelete = MockDelete();
-    mockFormParams = MockFormParams();
-    mockQueryParams = MockQueryParams();
-
-    _cubit = DeletionCubit(delete: mockDelete);
   });
 
   test('DeletionState.props', () {
