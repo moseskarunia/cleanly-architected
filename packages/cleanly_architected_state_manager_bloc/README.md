@@ -6,6 +6,6 @@
 
 <a href="https://www.buymeacoffee.com/moseskarunia" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="50" style="height: 6px !important;width: 22px !important;" ></a>
 
-State manager for cleanly architected using bloc / cubit.
-
 This package contains ready-to-use deletion, create, update, and query cubit.
+
+Made to be used alongside other [cleanly_architected](https://github.com/moseskarunia/cleanly-architected) packages.
