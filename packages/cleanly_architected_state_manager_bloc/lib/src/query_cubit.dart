@@ -2,10 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:cleanly_architected_core/cleanly_architected_core.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:copy_with_extension/copy_with_extension.dart';
 
-part 'query_cubit.g.dart';
-
+/// State manager to help query data.
 class QueryCubit<T extends EquatableEntity, U extends QueryParams<T>>
     extends Cubit<QueryState<T>> {
   final ReadNext<T, U> _readNext;
@@ -31,7 +29,13 @@ class QueryCubit<T extends EquatableEntity, U extends QueryParams<T>>
       return;
     }
 
-    emit(state.copyWith(isLoading: true));
+    emit(QueryState<T>(
+      isLoading: true,
+      data: state.data,
+      failure: state.failure,
+      endOfList: state.endOfList,
+      pageNumber: state.pageNumber,
+    ));
 
     final newPageNumber = toPage ?? state.pageNumber + 1;
 
@@ -42,12 +46,17 @@ class QueryCubit<T extends EquatableEntity, U extends QueryParams<T>>
     );
 
     final newState = result.fold(
-      (failure) => state.copyWith(failure: failure, isLoading: false),
-      (data) => state.copyWithNull(failure: true).copyWith(
-            data: data,
-            endOfList: newPageNumber * pageSize > data.length,
-            isLoading: false,
-          ),
+      (failure) => QueryState<T>(
+        data: state.data,
+        failure: failure,
+        endOfList: state.endOfList,
+        pageNumber: state.pageNumber,
+      ),
+      (data) => QueryState<T>(
+        data: data,
+        endOfList: newPageNumber * pageSize > data.length,
+        pageNumber: state.pageNumber,
+      ),
     );
 
     emit(newState);
@@ -60,7 +69,13 @@ class QueryCubit<T extends EquatableEntity, U extends QueryParams<T>>
       return;
     }
 
-    emit(state.copyWith(isLoading: true));
+    emit(QueryState<T>(
+      isLoading: true,
+      data: state.data,
+      failure: state.failure,
+      endOfList: state.endOfList,
+      pageNumber: state.pageNumber,
+    ));
 
     final result = await _refreshAll(
       params: params,
@@ -68,20 +83,24 @@ class QueryCubit<T extends EquatableEntity, U extends QueryParams<T>>
     );
 
     final newState = result.fold(
-      (failure) => state.copyWith(failure: failure, isLoading: false),
-      (data) => state.copyWithNull(failure: true).copyWith(
-            data: data,
-            pageNumber: 1,
-            endOfList: pageSize > data.length,
-            isLoading: false,
-          ),
+      (failure) => QueryState<T>(
+        data: state.data,
+        failure: failure,
+        endOfList: state.endOfList,
+        pageNumber: state.pageNumber,
+      ),
+      (data) => QueryState<T>(
+        data: data,
+        pageNumber: 1,
+        endOfList: pageSize > data.length,
+      ),
     );
 
     emit(newState);
   }
 }
 
-@CopyWith(generateCopyWithNull: true)
+/// State of [QueryCubit]
 class QueryState<T extends EquatableEntity> extends Equatable {
   /// True when the cubit is waiting for data. You should
   final bool isLoading;

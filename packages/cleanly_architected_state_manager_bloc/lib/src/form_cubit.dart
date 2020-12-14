@@ -1,11 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:cleanly_architected_core/cleanly_architected_core.dart';
-import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
-part 'form_cubit.g.dart';
-
+/// State manager of entity creation.
 class CreateFormCubit<T extends EquatableEntity, U extends FormParams<T>,
     V extends QueryParams<T>> extends Cubit<FormState<T>> {
   final Create<T, U, V> _create;
@@ -16,27 +14,30 @@ class CreateFormCubit<T extends EquatableEntity, U extends FormParams<T>,
   })  : _create = create,
         super(initialState);
 
+  /// Create an entity with [params]
   Future<void> create({@required U params}) async {
     if (state.isLoading) {
       return;
     }
 
-    emit(state.copyWith(isLoading: true));
+    emit(FormState<T>(
+      isLoading: true,
+      failure: state.failure,
+      data: state.data,
+    ));
 
     final result = await _create(params: params);
 
     final newState = result.fold(
-      (failure) => state.copyWith(failure: failure, isLoading: false),
-      (data) => state.copyWithNull(failure: true).copyWith(
-            data: data,
-            isLoading: false,
-          ),
+      (failure) => FormState<T>(failure: failure, data: state.data),
+      (data) => FormState<T>(data: data),
     );
 
     emit(newState);
   }
 }
 
+/// State manager of entity update.
 class UpdateFormCubit<T extends EquatableEntity, U extends FormParams<T>,
     V extends QueryParams<T>> extends Cubit<FormState<T>> {
   final Update<T, U, V> _update;
@@ -47,28 +48,30 @@ class UpdateFormCubit<T extends EquatableEntity, U extends FormParams<T>,
   })  : _update = update,
         super(initialState);
 
+  /// Update entity [T] with provided [params]
   Future<void> update({@required U params}) async {
     if (state.isLoading) {
       return;
     }
 
-    emit(state.copyWith(isLoading: true));
+    emit(FormState<T>(
+      isLoading: true,
+      failure: state.failure,
+      data: state.data,
+    ));
 
     final result = await _update(params: params);
 
     final newState = result.fold(
-      (failure) => state.copyWith(failure: failure, isLoading: false),
-      (data) => state.copyWithNull(failure: true).copyWith(
-            data: data,
-            isLoading: false,
-          ),
+      (failure) => FormState<T>(failure: failure, data: state.data),
+      (data) => FormState<T>(data: data),
     );
 
     emit(newState);
   }
 }
 
-@CopyWith(generateCopyWithNull: true)
+/// State of either [CreateFormCubit] or [UpdateFormCubit]
 class FormState<T extends EquatableEntity> extends Equatable {
   final bool isLoading;
   final T data;
