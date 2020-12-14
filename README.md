@@ -2,7 +2,7 @@
 
 [![codecov](https://codecov.io/gh/moseskarunia/cleanly-architected/branch/master/graph/badge.svg?token=3AT2NUV710)](https://codecov.io/gh/moseskarunia/cleanly-architected)
 
-![cleanly_architected_core](https://github.com/moseskarunia/cleanly-architected/workflows/cleanly_architected_state_manager_bloc/badge.svg) [![pub package](https://img.shields.io/pub/v/cleanly_architected_core.svg)](https://pub.dev/packages/cleanly_architected_core)
+![cleanly_architected_core](https://github.com/moseskarunia/cleanly-architected/workflows/cleanly_architected_core/badge.svg) [![pub package](https://img.shields.io/pub/v/cleanly_architected_core.svg)](https://pub.dev/packages/cleanly_architected_core)
 
 ![cleanly_architected_state_manager_bloc](https://github.com/moseskarunia/cleanly-architected/workflows/cleanly_architected_state_manager_bloc/badge.svg) [![pub package](https://img.shields.io/pub/v/cleanly_architected_state_manager_bloc.svg)](https://pub.dev/packages/cleanly_architected_state_manager_bloc)
 
