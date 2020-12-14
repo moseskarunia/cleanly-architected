@@ -2,7 +2,7 @@
 
 ![cleanly_architected_core](https://github.com/moseskarunia/cleanly-architected/workflows/cleanly_architected_core/badge.svg) ![cleanly_architected_state_manager_bloc](https://github.com/moseskarunia/cleanly-architected/workflows/cleanly_architected_state_manager_bloc/badge.svg) [![codecov](https://codecov.io/gh/moseskarunia/cleanly-architected/branch/master/graph/badge.svg?token=3AT2NUV710)](https://codecov.io/gh/moseskarunia/cleanly-architected)
 
-<a href="https://www.buymeacoffee.com/moseskarunia" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="10" style="height: 6px !important;width: 22px !important;" ></a>
+<a href="https://www.buymeacoffee.com/moseskarunia" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="20" style="height: 6px !important;width: 22px !important;" ></a>
 
 A flutter library to help you lay down the foundation of clean architecture without having to a lot to set up initially, utilizing the power of generics.
 
