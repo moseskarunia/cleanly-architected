@@ -1,6 +1,10 @@
 # cleanly_architected_core
 
-![cleanly_architected_core](https://github.com/moseskarunia/cleanly-architected/workflows/cleanly_architected_core/badge.svg) [![codecov](https://codecov.io/gh/moseskarunia/cleanly-architected/branch/master/graph/badge.svg?token=3AT2NUV710)](https://codecov.io/gh/moseskarunia/cleanly-architected)
+![cleanly_architected_core](https://github.com/moseskarunia/cleanly-architected/workflows/cleanly_architected_core/badge.svg) [![codecov](https://codecov.io/gh/moseskarunia/cleanly-architected/branch/master/graph/badge.svg?token=3AT2NUV710)](https://codecov.io/gh/moseskarunia/cleanly-architected) [![pub package](https://img.shields.io/pub/v/cleanly_architected_core.svg)](https://pub.dev/packages/cleanly_architected_core)
+
+<span class="badge-buymeacoffee">
+<a href="https://ko-fi.com/moseskarunia" title="Donate to this project using Buy Me A Coffee"><img src="https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg" alt="Buy Me A Coffee donate button" /></a>
+</span>
 
 The core library of [cleanly_architected](https://github.com/moseskarunia/cleanly-architected) for more flexible dependencies. This way, you can implement the platform and state manager of your choice.
 
