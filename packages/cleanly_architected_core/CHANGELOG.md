@@ -1,3 +1,6 @@
+## [0.0.6] - 14 December 2020
+- Make readme file better
+
 ## [0.0.5] - 12 December 2020
 - Removes flutter dependency
 - Untrack pubspec.lock
