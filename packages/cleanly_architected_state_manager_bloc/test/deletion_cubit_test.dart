@@ -6,7 +6,8 @@ import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
 class _TestEntity extends EquatableEntity {
-  _TestEntity(String id) : super(id);
+  final String id;
+  _TestEntity(this.id);
 
   @override
   List<Object> get props => [id];
@@ -15,6 +16,9 @@ class _TestEntity extends EquatableEntity {
   Map<String, dynamic> toJson() {
     throw UnimplementedError();
   }
+
+  @override
+  String get entityIdentifier => id;
 }
 
 // ignore: must_be_immutable
