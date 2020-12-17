@@ -6,7 +6,8 @@ import 'package:test/test.dart';
 import 'package:mockito/mockito.dart';
 
 class _TestEntity extends EquatableEntity {
-  const _TestEntity(String id) : super(id);
+  final String id;
+  const _TestEntity(this.id);
 
   @override
   // TODO: implement props
@@ -16,6 +17,9 @@ class _TestEntity extends EquatableEntity {
   Map<String, dynamic> toJson() {
     throw UnimplementedError();
   }
+
+  @override
+  String get entityIdentifier => id;
 }
 
 class _TestEntityQParams extends QueryParams<_TestEntity> {

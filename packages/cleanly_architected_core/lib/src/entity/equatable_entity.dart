@@ -5,11 +5,11 @@ import 'package:equatable/equatable.dart';
 /// like to remove duplication in repository, and getting key in local data
 /// source.
 abstract class EquatableEntity extends Equatable {
-  /// Id must be string. This to simplify the case to store the entity locally
-  /// with key-value database.
-  final String id;
+  /// Must be string. This to simplify when the library need unique id.
+  /// e.g. When removing duplicates in repo & Storing data in local data source.
+  String get entityIdentifier;
 
-  const EquatableEntity(this.id);
+  const EquatableEntity();
 
   /// Will be used in [LocalQueryDataSource]'s putAll.
   /// So you don't have to keep implementing the same things multiple times.

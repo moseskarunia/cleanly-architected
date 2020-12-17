@@ -3,15 +3,19 @@ import 'package:cleanly_architected_core/src/entity/equatable_entity.dart';
 import 'package:test/test.dart';
 
 class _TestClass extends EquatableEntity {
-  _TestClass(String id) : super(id);
+  final String id;
+  _TestClass(this.id);
 
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [entityIdentifier];
 
   @override
   Map<String, dynamic> toJson() {
     throw UnimplementedError();
   }
+
+  @override
+  String get entityIdentifier => id;
 }
 
 void main() {

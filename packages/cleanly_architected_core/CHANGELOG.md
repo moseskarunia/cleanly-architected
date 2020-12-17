@@ -1,3 +1,6 @@
+## [0.0.7] - 17 December 2020
+- (BREAKING!) `EquatableEntity` no longer requires id, instead, it now requires you to override a getter called `entityIdentifier`. This is the new way to get unique field from your entity. This way, you can have your own `id`. I named it `entityIdentifier` for less chance to conflict with your own field name.
+
 ## [0.0.6] - 14 December 2020
 - Make readme file better
 

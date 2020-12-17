@@ -7,14 +7,19 @@ import 'package:mockito/mockito.dart';
 
 class _TestEntity extends EquatableEntity {
   final String name;
+  final String id;
 
-  const _TestEntity({String id, this.name}) : super(id);
+  const _TestEntity({this.id, this.name});
 
   @override
-  List<Object> get props => [id, name];
+  List<Object> get props => [entityIdentifier, name];
 
   @override
   Map<String, dynamic> toJson() => <String, dynamic>{'id': id, 'name': name};
+
+  @override
+  // TODO: implement entityIdentifier
+  String get entityIdentifier => id;
 }
 
 class _MutationParams extends FormParams<_TestEntity> {

@@ -158,7 +158,7 @@ class DataRepository<T extends EquatableEntity, U extends QueryParams<T>> {
     }
   }
 
-  /// Put one or more data with key equals to [e.id] and value to [e.toJson()]
+  /// Put one or more data with key equals to [e.entityIdentifier] and value to [e.toJson()]
   /// in the localDataSource, where e is each data in the array.
   Future<Either<CleanFailure, Unit>> putLocalData(
       {@required List<T> data}) async {
@@ -214,8 +214,8 @@ class DataRepository<T extends EquatableEntity, U extends QueryParams<T>> {
     );
 
     cachedData = [...cachedData, ...remoteResults];
-    final ids = cachedData.map((e) => e.id).toSet();
-    cachedData.retainWhere((x) => ids.remove(x.id));
+    final ids = cachedData.map((e) => e.entityIdentifier).toSet();
+    cachedData.retainWhere((x) => ids.remove(x.entityIdentifier));
 
     if (localDataSource != null) {
       await localDataSource.putAll(data: cachedData);

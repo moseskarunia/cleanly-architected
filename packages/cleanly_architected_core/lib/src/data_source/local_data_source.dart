@@ -56,11 +56,11 @@ abstract class LocalDataSource<T extends EquatableEntity,
     }
 
     final filteredData =
-        data.where((e) => e.id != null && e.id.isNotEmpty).toList();
+        data.where((e) => e.entityIdentifier != null && e.entityIdentifier.isNotEmpty).toList();
 
     final Map<String, Map<String, dynamic>> reducedData = filteredData
         .fold<Map<String, Map<String, dynamic>>>(
-            {}, (prev, e) => {...prev, e.id: e.toJson()});
+            {}, (prev, e) => {...prev, e.entityIdentifier: e.toJson()});
 
     await storage.putAll(storageName: storageName, data: reducedData);
   }
