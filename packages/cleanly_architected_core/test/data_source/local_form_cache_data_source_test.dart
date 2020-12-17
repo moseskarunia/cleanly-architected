@@ -18,7 +18,6 @@ class _TestEntity extends EquatableEntity {
   Map<String, dynamic> toJson() => <String, dynamic>{'id': id, 'name': name};
 
   @override
-  // TODO: implement entityIdentifier
   String get entityIdentifier => id;
 }
 

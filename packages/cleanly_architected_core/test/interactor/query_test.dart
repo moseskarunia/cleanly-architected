@@ -10,7 +10,6 @@ class _TestEntity extends EquatableEntity {
   const _TestEntity(this.id);
 
   @override
-  // TODO: implement props
   List<Object> get props => [];
 
   @override
