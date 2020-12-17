@@ -1,4 +1,4 @@
-import 'package:cleanly_architected_core/src/utils/graph_ql_params.dart';
+import 'package:cleanly_architected_core/src/util/graph_ql_params.dart';
 import 'package:test/test.dart';
 
 void main() {

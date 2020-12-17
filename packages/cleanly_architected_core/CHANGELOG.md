@@ -1,3 +1,10 @@
+## [0.0.10] - 18 December 2020
+- Forgot to add `GraphQLParams` to barrel export.
+
+_Copied from 0.0.9_
+- (BREAKING!) `CleanApiClient` to better match HTTP request names: read -> get, create -> post, update -> put
+- Support GraphQL parameters in `CleanApiClient` post.
+
 ## [0.0.9] - 18 December 2020
 - (BREAKING!) `CleanApiClient` to better match HTTP request names: read -> get, create -> post, update -> put
 - Support GraphQL parameters in `CleanApiClient` post.
