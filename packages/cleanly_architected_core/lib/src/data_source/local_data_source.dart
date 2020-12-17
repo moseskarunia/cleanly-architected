@@ -55,8 +55,10 @@ abstract class LocalDataSource<T extends EquatableEntity,
       return;
     }
 
-    final filteredData =
-        data.where((e) => e.entityIdentifier != null && e.entityIdentifier.isNotEmpty).toList();
+    final filteredData = data
+        .where(
+            (e) => e.entityIdentifier != null && e.entityIdentifier.isNotEmpty)
+        .toList();
 
     final Map<String, Map<String, dynamic>> reducedData = filteredData
         .fold<Map<String, Map<String, dynamic>>>(

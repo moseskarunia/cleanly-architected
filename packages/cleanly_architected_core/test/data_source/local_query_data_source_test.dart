@@ -70,7 +70,7 @@ void main() {
   });
 
   group('putAll', () {
-    group('should not do anything if ', () {
+    group('should not do anything if', () {
       test('storageName null', () async {
         final dataSource2 =
             _TestEntityLocalQueryDataSource2(storage: mockStorage);
@@ -90,13 +90,31 @@ void main() {
       });
     });
 
-    test('should exclude data which id returns null', () async {
+    test('should exclude data which entityIdentifier == null', () async {
       final fixtures = [
         _TestEntity(id: null, name: 'Apple'),
         _TestEntity(id: '2', name: 'Orange'),
         _TestEntity(id: null, name: 'Grape'),
         _TestEntity(id: '4', name: 'Pineapple'),
         _TestEntity(id: null, name: 'Banana'),
+      ];
+
+      await dataSource.putAll(data: fixtures);
+
+      verify(mockStorage.putAll(storageName: 'test-storage', data: {
+        '2': {'id': '2', 'name': 'Orange'},
+        '4': {'id': '4', 'name': 'Pineapple'}
+      }));
+    });
+
+    test('should exclude data which entityIdentifier == empty string',
+        () async {
+      final fixtures = [
+        _TestEntity(id: '', name: 'Apple'),
+        _TestEntity(id: '2', name: 'Orange'),
+        _TestEntity(id: '', name: 'Grape'),
+        _TestEntity(id: '4', name: 'Pineapple'),
+        _TestEntity(id: '', name: 'Banana'),
       ];
 
       await dataSource.putAll(data: fixtures);
