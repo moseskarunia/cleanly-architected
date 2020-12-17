@@ -1,30 +1,43 @@
+import 'package:cleanly_architected_core/src/utils/graph_ql_params.dart';
 import 'package:meta/meta.dart';
 
 /// Implement this from your http client of choice to make it independent
 /// from other layer in the application.
 ///
-/// In this layer, you also need to convert http library's exceptions into
+/// In this layer, you also need to convert client's exceptions into
 /// [CleanException]. This way, the repository layer can converts it into
 /// [Failure] with ease.
+///
+/// There's only [post] which contains [GraphQLParams] since basically a GraphQL
+/// request is always a post.
 abstract class CleanApiClient {
-  /// Get the data under [path] with [queryParams]
-  Future<List<Map<String, dynamic>>> read({
+  /// Send query request to the server.
+  Future<List<Map<String, dynamic>>> get({
     @required String path,
     Map<String, dynamic> queryParams,
   });
 
-  /// Update the data under [path] with [body]
-  Future<Map<String, dynamic>> create({
+  /// Send post request to the server.
+  ///
+  /// * [path] Your request path.
+  /// * [body] Your request body.
+  /// * [gqlParams] GraphQL-related convenient parameter. If this is a HTTP
+  ///   request, then simply ignore this.
+  Future<Map<String, dynamic>> post({
+    @required String path,
+    Map<String, dynamic> body,
+    GraphQLParams gqlParams,
+  });
+
+  /// Send put / update request to the server
+  Future<Map<String, dynamic>> put({
     @required String path,
     Map<String, dynamic> body,
   });
 
-  /// Update the data under [path] with [body]
-  Future<Map<String, dynamic>> update({
+  /// Send delete request to the server.
+  Future<void> delete({
     @required String path,
-    Map<String, dynamic> body,
+    Map<String, dynamic> params,
   });
-
-  /// Calls the server to delete data under [path] which satisfies [params]
-  Future<void> delete({@required String path, Map<String, dynamic> params});
 }

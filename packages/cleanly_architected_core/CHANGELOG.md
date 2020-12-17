@@ -1,3 +1,7 @@
+## [0.0.9] - 18 December 2020
+- (BREAKING!) `CleanApiClient` to better match HTTP request names: read -> get, create -> post, update -> put
+- Support GraphQL parameters in `CleanApiClient` post.
+
 ## [0.0.8] - 17 December 2020
 - Sorry! I released too hasty (0.0.7) and confidently without PR and waiting CI to complete.
 - Fix ci failed caused by dartfmt.
