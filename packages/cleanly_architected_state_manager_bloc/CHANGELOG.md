@@ -1,3 +1,6 @@
+## [0.0.7] - 18 December 2020
+- Set minimum supported `cleanly_architected_core` to `0.0.11`. Read the changelog [here](https://github.com/moseskarunia/cleanly-architected/blob/master/packages/cleanly_architected_core/CHANGELOG.md)
+
 ## [0.0.6] - 18 December 2020
 - Set minimum supported `cleanly_architected_core` to `0.0.10`. Read the changelog [here](https://github.com/moseskarunia/cleanly-architected/blob/master/packages/cleanly_architected_core/CHANGELOG.md)
 
