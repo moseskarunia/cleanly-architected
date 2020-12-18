@@ -1,3 +1,8 @@
+## [0.0.11] - 18 December 2020
+Removed both `GraphQLParams` and `CleanApiClient`. After further consideration. I think this put unecessary restriction on the implementation without much to gain. I will still keep `CleanLocalStorage`, because it will make some functions in `LocalFormCacheDataSource` and `LocalDataSource` doesn't need to be keep re-implemented each time.
+
+If you still need `GraphQLParams` in your project, feel free to copy it to your own personal project (along with its test file).
+
 ## [0.0.10] - 18 December 2020
 - Forgot to add `GraphQLParams` to barrel export.
 
