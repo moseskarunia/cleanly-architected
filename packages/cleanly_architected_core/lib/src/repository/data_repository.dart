@@ -113,7 +113,10 @@ class DataRepository<T extends EquatableEntity, U extends QueryParams<T>> {
       }
 
       if (remoteQueryDataSource == null) {
-        await _queryLocally(pageSize: pageSize, params: params);
+        await _queryLocally(
+          pageSize: pageSize,
+          params: params,
+        );
         endOfList = true;
         return Right(cachedData.take(pageSize).toList());
       }
@@ -122,6 +125,7 @@ class DataRepository<T extends EquatableEntity, U extends QueryParams<T>> {
         pageNumber: 1,
         pageSize: pageSize,
         params: params,
+        clearCached: true,
       );
 
       return Right(cachedData.take(pageSize).toList());
@@ -201,6 +205,7 @@ class DataRepository<T extends EquatableEntity, U extends QueryParams<T>> {
     @required int pageSize,
     @required int pageNumber,
     @required U params,
+    bool clearCached = false,
   }) async {
     if (remoteQueryDataSource == null) {
       endOfList = true;
@@ -213,7 +218,11 @@ class DataRepository<T extends EquatableEntity, U extends QueryParams<T>> {
       params: params,
     );
 
-    cachedData = [...cachedData, ...remoteResults];
+    if (!clearCached) {
+      cachedData = [...cachedData, ...remoteResults];
+    } else {
+      cachedData = [...remoteResults];
+    }
     final ids = cachedData.map((e) => e.entityIdentifier).toSet();
     cachedData.retainWhere((x) => ids.remove(x.entityIdentifier));
 

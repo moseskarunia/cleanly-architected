@@ -514,7 +514,7 @@ void main() {
       verifyZeroInteractions(mockRemoteDataSource);
     });
 
-    group('will call remoteDataSource', () {
+    group('will call remoteDataSource and replace existing cachedData', () {
       Future<void> _performTest() async {
         when(mockRemoteDataSource.read(
           pageNumber: anyNamed('pageNumber'),
@@ -527,6 +527,10 @@ void main() {
             _TestEntity('3', 'Pineapple'),
           ],
         );
+
+        repo.cachedData = [
+          _TestEntity('XYZ', 'Any fruit'),
+        ];
 
         final results = await repo.refreshAll(
           pageSize: 3,
