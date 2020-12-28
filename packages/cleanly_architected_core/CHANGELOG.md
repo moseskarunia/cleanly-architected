@@ -1,3 +1,6 @@
+## [0.0.12] - 28 December 2020
+- (BUG) `DataRepository`'s `refreshAll` should clear existing `cachedData` instead of just appending it. `readNext` behavior stays the same
+
 ## [0.0.11] - 18 December 2020
 Removed both `GraphQLParams` and `CleanApiClient`. After further consideration. I think this put unecessary restriction on the implementation without much to gain. I will still keep `CleanLocalStorage`, because it will make some functions in `LocalFormCacheDataSource` and `LocalDataSource` doesn't need to be keep re-implemented each time.
 
