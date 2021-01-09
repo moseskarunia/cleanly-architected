@@ -1,6 +1,6 @@
 name: cleanly_architected_core
 description: A dart project to help set up clean architecture with less boilerplate.
-version: 0.0.13
+version: 0.0.14
 repository: https://github.com/moseskarunia/cleanly-architected/tree/master/packages/cleanly_architected_core
 
 environment:

@@ -1,6 +1,6 @@
 name: cleanly_architected_state_manager_bloc
 description: State manager for cleanly architected using bloc / cubit. This way, you can use the core with other state manager as well.
-version: 0.0.9
+version: 0.0.10
 repository: https://github.com/moseskarunia/cleanly-architected/tree/master/packages/cleanly_architected_state_manager_bloc
 
 environment:
