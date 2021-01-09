@@ -151,7 +151,7 @@ class DataRepository<T extends EquatableEntity, U extends QueryParams<T>> {
 
       if (lastParams != null) {
         final localResults = await localDataSource.read(params: lastParams);
-        cachedData = [...localResults];
+        cachedData = localResults;
       }
 
       return Right(unit);

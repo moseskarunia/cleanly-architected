@@ -1,6 +1,9 @@
-## [0.0.13] - 9 January 2021
+## [0.0.14] - 9 January 2021
 
 - Updated readme
+
+## [0.0.13] - 29 December 2020
+- (BUG) In `DataRepository`'s `delete`, if querying localDataSource after deleting, the return value should replace cachedData instead of just appending.
 
 ## [0.0.12] - 28 December 2020
 - (BUG) `DataRepository`'s `refreshAll` should clear existing `cachedData` instead of just appending it. `readNext` behavior stays the same

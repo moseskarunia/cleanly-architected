@@ -8,7 +8,7 @@ environment:
 
 dependencies:
   bloc: ^6.1.1
-  cleanly_architected_core: ^0.0.12
+  cleanly_architected_core: ^0.0.13
   dartz: ^0.9.1
   equatable: ^1.2.5
   meta: ^1.2.4

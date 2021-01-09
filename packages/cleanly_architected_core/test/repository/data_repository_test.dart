@@ -640,11 +640,12 @@ void main() {
               (_) async => [
                 _TestEntity('1', 'Orange'),
                 _TestEntity('2', 'Strawberry'),
-                _TestEntity('3', 'Pineapple'),
               ],
             );
             repo.cachedData = [
               _TestEntity('1', 'Orange'),
+              _TestEntity('2', 'Strawberry'),
+              _TestEntity('3', 'Pineapple'),
             ];
             repo.lastParams = _TestEntityQueryParams('abc');
             await repo.deleteLocalData(id: '3');
@@ -655,7 +656,6 @@ void main() {
             expect(repo.cachedData, [
               _TestEntity('1', 'Orange'),
               _TestEntity('2', 'Strawberry'),
-              _TestEntity('3', 'Pineapple'),
             ]);
             verifyZeroInteractions(mockRemoteDataSource);
           });
