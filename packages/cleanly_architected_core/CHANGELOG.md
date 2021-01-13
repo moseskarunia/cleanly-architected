@@ -1,5 +1,7 @@
-## [0.0.14] - 9 January 2021
+## [0.0.15] - 13 Jan 2020
+- Added discontinued notice in README
 
+## [0.0.14] - 9 January 2021
 - Updated readme
 
 ## [0.0.13] - 29 December 2020

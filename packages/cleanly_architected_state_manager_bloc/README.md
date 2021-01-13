@@ -1,6 +1,6 @@
 # cleanly_architected_state_manager_bloc
 
-⚠️ This package is still under development. A lot features still missing and can undergo many breaking changes until it reaches 1.0.0. Not recommended for production.
+⚠️ I've decided to discontinue this library and continue to develop the core concept in [cornerstone](https://pub.dev/packages/cornerstone), which is designed to be more composable and flexible. Feel free to check it out!
 
 [![codecov](https://codecov.io/gh/moseskarunia/cleanly-architected/branch/master/graph/badge.svg?token=3AT2NUV710)](https://codecov.io/gh/moseskarunia/cleanly-architected)
 
